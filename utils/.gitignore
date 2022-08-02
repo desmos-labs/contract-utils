@@ -1,0 +1,4 @@
+# Ignore installe modules
+node_modules/
+# Ignore user configurations
+config.ts
