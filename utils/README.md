@@ -6,12 +6,12 @@ Set of utility functions to interact with the Desmos smart contract available [h
 If you have already node and yarn installed on you system you can skip this section.
 
 Get the latest version of node for your OS from [here](https://nodejs.org/en/download).  
-After install node to install yarn just run `npm install --global yarn`, you can check that yarn is installed by
-running `yarn --version`.
+After installing node to install yarn just run `npm install --global yarn`, you can then check that yarn is 
+installed by running `yarn --version`.
 
 ## How to use
 Create a copy of the `config.examples.ts` and name it `config.ts` and modify it according your needs.  
-To execute the scrip then run `yarn utils:$SCRIP_NAME` from the root directory of this project.
+To execute the scripts then run `yarn utils:$SCRIP_NAME` from the root directory of this project.
 
 ## Scripts
 * `upload-contract`: Allow to upload a compiled CosmWASM contract to the chain.
