@@ -206,7 +206,15 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@desmoslabs/desmjs-types@4.3.1", "@desmoslabs/desmjs-types@^4.3.1":
+"@desmoslabs/desmjs-types@4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@desmoslabs/desmjs-types/-/desmjs-types-4.3.2.tgz#bca5ffca89bbb1881cc61165777a9b787b5a597d"
+  integrity sha512-kXhCr3jgkxNZnNlJd9ELOe2TvUvhmg0TaAUT0RXgUhR2zkV8gt+pWZC4CJ4/1JEBveGp5eQ2e4t/A3BqN0mFkA==
+  dependencies:
+    long "^4.0.0"
+    protobufjs "^6.11.2"
+
+"@desmoslabs/desmjs-types@^4.3.1":
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/@desmoslabs/desmjs-types/-/desmjs-types-4.3.1.tgz#6fa30f620a0ba6a254e730fd0f6132e68b0e74c8"
   integrity sha512-tSSPyvNpoc6fojjMwRdn/ll9PrErl7kC2+dPOKH9Zz7LxTKpXmKePDSR+sYqhH/QjKHzIJ/2Lc9C+MYJEwRIvw==
@@ -214,10 +222,10 @@
     long "^4.0.0"
     protobufjs "^6.11.2"
 
-"@desmoslabs/desmjs@^4.3.1":
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/@desmoslabs/desmjs/-/desmjs-4.3.1.tgz#269a8902f27e25b7688d8761d81c42a3a8f3e4b3"
-  integrity sha512-QqVozgDOpY9P5EIprWk6J3rMggJeGYi6QAPA0w2STPHpCiAiozXszxtAQ78wTqJoEguCVlKhXakZtuQf63gODA==
+"@desmoslabs/desmjs@^4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@desmoslabs/desmjs/-/desmjs-4.3.2.tgz#e954fae987c62d3d732b8d70b0c95e76177075b4"
+  integrity sha512-AHsGlpxQV1ukyTcGksDl0dVo96DcBiBU2TNBp6FccQEgTrbOrWrF/9WIX5wf2404Vc3Rh60M2IalbJcZMi7MPg==
   dependencies:
     "@cosmjs/amino" "^0.28.11"
     "@cosmjs/cosmwasm-stargate" "^0.28.11"
@@ -228,7 +236,7 @@
     "@cosmjs/stargate" "^0.28.11"
     "@cosmjs/tendermint-rpc" "^0.28.11"
     "@cosmjs/utils" "^0.28.11"
-    "@desmoslabs/desmjs-types" "4.3.1"
+    "@desmoslabs/desmjs-types" "4.3.2"
     cosmjs-types "^0.4.1"
     cosmos-wallet "^1.1.0"
     long "^4.0.0"

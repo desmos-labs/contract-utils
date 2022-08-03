@@ -1,5 +1,4 @@
-import { DesmosClient, SigningMode } from "@desmoslabs/desmjs";
-import OfflineSignerAdapter from "@desmoslabs/desmjs/build/signers/adapter";
+import { DesmosClient, SigningMode, OfflineSignerAdapter } from "@desmoslabs/desmjs";
 import * as Config from "./config"
 import { program } from "commander"
 import * as fs from "fs";

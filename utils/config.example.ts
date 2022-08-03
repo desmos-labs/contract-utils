@@ -1,17 +1,10 @@
-import { Slip10RawIndex, HdPath } from "@cosmjs/crypto";
-import {GasPrice} from "@desmoslabs/desmjs";
+import { GasPrice, makeDesmosPath } from "@desmoslabs/desmjs";
 
 
 // The account seed phrase
 export const mnemonic = ""
 // Derivation path use to derive the mnemonic
-export const derivationPath: HdPath = [
-    Slip10RawIndex.hardened(44),
-    Slip10RawIndex.hardened(852),
-    Slip10RawIndex.hardened(0),
-    Slip10RawIndex.normal(0),
-    Slip10RawIndex.normal(0),
-];
+export const derivationPath = makeDesmosPath();
 // Rpc endpoint used to interact with the chaim
 // Mainnet
 export const rpcEndpoint = "https://rpc.mainnet.desmos.network"
