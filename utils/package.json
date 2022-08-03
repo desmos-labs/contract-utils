@@ -10,7 +10,7 @@
   "scripts": {
     "init-poap": "ts-node init-poap.ts",
     "upload-contract": "ts-node upload-contract.ts",
-    "query-poap-state": "ts-node query-poap.ts"
+    "poap": "ts-node poap-exec.ts"
   },
   "dependencies": {
     "@cosmjs/crypto": "^0.28.11",

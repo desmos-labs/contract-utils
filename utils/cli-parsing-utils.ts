@@ -2,7 +2,7 @@ import { InvalidArgumentError } from "commander"
 
 /**
  * Parse a string and ensure that is a valid ipfs url.
- * @param rawUri - The uri that will be parsed.
+ * @param rawUri - The string to be parsed as ipfs url.
  */
 export function parseIpfsUri(rawUri: string): URL {
     let url: URL;
@@ -22,7 +22,7 @@ export function parseIpfsUri(rawUri: string): URL {
 /**
  * Parses a string and ensure that is a RFC3339 encoded date time
  * and converts it into the CosmWASM Timestamp struct (nanoseconds from epoch as string).
- * @param rawDateTime - The date that will be parsed.
+ * @param rawDateTime - The string to be parsed as timestamp.
  */
 export function parseCWTimestamp(rawDateTime: string): string {
     const date = new Date(rawDateTime);
@@ -34,4 +34,19 @@ export function parseCWTimestamp(rawDateTime: string): string {
     const nanos = date.getTime() * 1000000;
 
     return nanos.toString();
+}
+
+/**
+ * Parse a string and ensure that represents a valid boolean value.
+ * @param rawBool - The string to be parsed as boolean.
+ */
+export function parseBool(rawBool: string): boolean {
+    const lowerCase = rawBool.toLowerCase();
+    if (lowerCase === "true") {
+        return true;
+    } else if (lowerCase === "false") {
+        return false;
+    } else {
+        throw new InvalidArgumentError('The enable flag should be "true" or "false"');
+    }
 }
