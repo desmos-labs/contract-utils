@@ -1,4 +1,4 @@
-import { EventInfo_1 } from "./shared-types";
+import { EventInfo_1, Uint64 } from "./shared-types";
 
 export interface InstantiateMsg {
 /**
@@ -8,7 +8,7 @@ admin: string
 /**
  * Id of the CW721 contract to initialize together with this contract.
  */
-cw721_code_id: number
+cw721_code_id: Uint64
 /**
  * Initialization message that will be sent to the CW721 contract.
  */

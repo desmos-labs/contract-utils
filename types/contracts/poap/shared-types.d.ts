@@ -51,10 +51,6 @@ export interface EventInfo_1 {
      */
     creator: string;
     /**
-     * Id of the cw721 contract that the POAP contract initialise.
-     */
-    cw721_code_id: number;
-    /**
      * Time at which the event ends.
      */
     end_time: Timestamp;

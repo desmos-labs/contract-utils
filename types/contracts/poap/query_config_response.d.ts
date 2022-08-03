@@ -1,4 +1,4 @@
-import { Addr } from "./shared-types";
+import { Addr, Uint64 } from "./shared-types";
 
 /**
  * Response to [`QueryMsg::Config`].
@@ -15,7 +15,7 @@ cw721_contract: Addr
 /**
  * Id of the cw721 contract that this contract has initialized.
  */
-cw721_contract_code: number
+cw721_contract_code: Uint64
 /**
  * Tells if the users can execute the [`ExecuteMsg::Mint`].
  */
