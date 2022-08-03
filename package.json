@@ -1,7 +1,8 @@
 {
   "private": true,
-  "workspaces": ["types", "utils"],
-  "scripts": {
-
-  }
+  "workspaces": [
+    "types",
+    "utils"
+  ],
+  "packageManager": "yarn@3.2.2"
 }
