@@ -8,7 +8,6 @@
   "license": "Apache 2.0",
   "private": true,
   "scripts": {
-    "init-poap": "ts-node init-poap.ts",
     "upload-contract": "ts-node upload-contract.ts",
     "poap": "ts-node poap.ts"
   },
