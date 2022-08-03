@@ -4,5 +4,8 @@
     "types",
     "utils"
   ],
+  "scripts": {
+    "utils:poap": "yarn workspace contracts-utils poap"
+  },
   "packageManager": "yarn@3.2.2"
 }
