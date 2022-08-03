@@ -8,9 +8,9 @@
   "license": "Apache 2.0",
   "private": true,
   "scripts": {
-    "contract-codes": "ts-node query-contract-codes.ts",
+    "init-poap": "ts-node init-poap.ts",
     "upload-contract": "ts-node upload-contract.ts",
-    "init-poap": "ts-node init-poap.ts"
+    "query-poap-state": "ts-node query-poap.ts"
   },
   "dependencies": {
     "@cosmjs/crypto": "^0.28.11",
