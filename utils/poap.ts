@@ -54,7 +54,11 @@ async function main() {
             console.log("Contract initialized", initResult);
         })
 
-    program.command("query")
+    const queryCommand = program.command("query")
+        .description("Subcommand to query the contract");
+
+    queryCommand
+        .command("state")
         .description("Queries the contract state")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (options) => {
@@ -66,7 +70,23 @@ async function main() {
             // Query event info
             const event_info = await client.queryContractSmart(options.contract, {event_info: {}} as QueryMsg);
             console.log("EventInfo", event_info);
-        })
+        });
+
+    queryCommand
+        .command("minted-amount")
+        .description("Queries the amount of contracts minted from an user")
+        .requiredOption("--user <user>", "bech32 encoded address of the user of interest")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .action(async (options) => {
+            console.log(`Quering minted amount for ${options.user}`)
+            // Query config
+            const mintedAmount = await client.queryContractSmart(options.contract, {
+                minted_amount: {
+                    user: options.user
+                }
+            } as QueryMsg);
+            console.log("mintedAmount", mintedAmount);
+        });
 
     program.command("mint-enabled")
         .description("Enable/disable the possibility to mint a poap from the users")
