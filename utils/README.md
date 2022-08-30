@@ -1,5 +1,5 @@
 # Utils
-Set of utility functions to interact with the Desmos smart contract available [here](https://github.com/desmos-labs/desmos-contracts).
+Set of utility functions to interact with the Desmos available smart contracts [here](https://github.com/desmos-labs/desmos-contracts).
 
 
 ## Setup guide

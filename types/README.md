@@ -1,5 +1,5 @@
 # Types
-Package that provides the type to interact with the smart contracts available [here](https://github.com/desmos-labs/desmos-contracts).  
+Package that provides the types to interact with the available smart contracts [here](https://github.com/desmos-labs/desmos-contracts).  
 Inside this directory is also present a ts script that can generate the types 
 definitions of the messages to interact with a smart contract.  
 This script is a slight modification of the one developed from the **Stargaze** 
