@@ -24,8 +24,7 @@ async function main() {
         .requiredOption("--start <start>", "Datetime when the event will start in RFC3339 format (2022-12-31:10:00:00)", parseCWTimestamp)
         .requiredOption("--end <end>", "Date when the event will end in RFC3339 format (2022-12-31:10:00:00)", parseCWTimestamp)
         .requiredOption("--address-limit <address_limit>", "Max number of poap that an user can receive", parseInt)
-        .requiredOption("--poap-uri <poap_uri>", "ipfs poap uri that contains the poap metadata", parseIpfsUri)
-        .requiredOption("--event-uri <event_uri>", "ipfs event uri that contains the event metadata", parseIpfsUri)
+        .requiredOption("--poap-uri <poap_uri>", "IPFS uri where the event's metadata are stored", parseIpfsUri)
         .option("--creator <creator>", "Bech32 address of who is creating the event", account!.address)
         .option("--minter <minter>", "Bech32 address of who will have the minting rights", account!.address)
         .option("--admin <admin>", "Bech32 address of who will have the contract admin rights", account!.address)
@@ -37,7 +36,7 @@ async function main() {
                 cw721_code_id: options.cw721CodeId.toString(),
                 event_info: {
                     creator: options.creator,
-                    base_poap_uri: options.poapUri.toString(),
+                    poap_uri: options.poapUri.toString(),
                     event_uri: options.eventUri.toString(),
                     start_time: options.start,
                     end_time: options.end,
