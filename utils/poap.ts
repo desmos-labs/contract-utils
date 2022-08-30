@@ -1,9 +1,9 @@
-import {DesmosClient, OfflineSignerAdapter, SigningMode} from "@desmoslabs/desmjs";
-import {program} from "commander";
+import { DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/desmjs";
+import { program } from "commander";
 import * as Config from "./config"
-import {EventInfo, ExecuteMsg, InstantiateMsg, QueryMsg} from "@desmoslabs/contract-types/contracts/poap";
-import {AccountData} from "@cosmjs/amino";
-import {parseBool, parseCWTimestamp, parseIpfsUri} from "./cli-parsing-utils";
+import { EventInfo, ExecuteMsg, InstantiateMsg, QueryMsg } from "@desmoslabs/contract-types/contracts/poap";
+import { AccountData } from "@cosmjs/amino";
+import { parseBool, parseCWTimestamp, parseIpfsUri } from "./cli-parsing-utils";
 
 async function main() {
     const signer = await OfflineSignerAdapter.fromMnemonic(SigningMode.DIRECT, Config.mnemonic);
@@ -62,11 +62,11 @@ async function main() {
         .action(async (options) => {
             console.log(`Quering state of ${options.contract}`)
             // Query config
-            const config = await client.queryContractSmart(options.contract, {config: {}} as QueryMsg);
+            const config = await client.queryContractSmart(options.contract, { config: {} } as QueryMsg);
             console.log("Config", config);
 
             // Query event info
-            const event_info = await client.queryContractSmart(options.contract, {event_info: {}} as QueryMsg);
+            const event_info = await client.queryContractSmart(options.contract, { event_info: {} } as QueryMsg);
             console.log("EventInfo", event_info);
         });
 
@@ -95,10 +95,10 @@ async function main() {
 
             if (enable) {
                 console.log(`Enabling mint for contract ${options.contract}`);
-                msg = {enable_mint: {}}
+                msg = { enable_mint: {} }
             } else {
                 console.log(`Disabling mint for contract ${options.contract}`);
-                msg = {enable_mint: {}}
+                msg = { enable_mint: {} }
             }
 
             const response = await client.execute(account.address, options.contract, msg, "auto");
