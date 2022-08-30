@@ -37,7 +37,6 @@ async function main() {
                 event_info: {
                     creator: options.creator,
                     poap_uri: options.poapUri.toString(),
-                    event_uri: options.eventUri.toString(),
                     start_time: options.start,
                     end_time: options.end,
                     per_address_limit: options.addressLimit
