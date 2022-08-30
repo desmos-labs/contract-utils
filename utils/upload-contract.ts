@@ -18,7 +18,7 @@ async function main() {
     // Checks if the smart contract is present.
     if (!fs.existsSync(options.contract)) {
         console.error(`Smart contract ${options.contract} don't exist`);
-        return 1;
+        return;
     }
     // Create a signer from the mnemonic
     const signer = await OfflineSignerAdapter.fromMnemonic(SigningMode.DIRECT, Config.mnemonic, {
