@@ -15,7 +15,7 @@ end_time: Timestamp
 /**
  * IPFS uri where the event's metadata are stored
  */
-event_uri: string
+poap_uri: string
 /**
  * Time at which the event starts.
  */

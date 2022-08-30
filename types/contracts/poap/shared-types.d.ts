@@ -34,18 +34,13 @@ export type Timestamp = Uint64;
 export type Uint64 = string;
 export interface EventInfo {
     [k: string]: unknown;
-    base_poap_uri: string;
     creator: Addr;
     end_time: Timestamp;
-    event_uri: string;
+    poap_uri: string;
     start_time: Timestamp;
 }
 export interface EventInfo_1 {
     [k: string]: unknown;
-    /**
-     * Identifies a valid IPFS URI corresponding to where the assets and metadata of the POAPs are stored.
-     */
-    base_poap_uri: string;
     /**
      * User that created the event.
      */
@@ -55,13 +50,13 @@ export interface EventInfo_1 {
      */
     end_time: Timestamp;
     /**
-     * Uri of the poap event
-     */
-    event_uri: string;
-    /**
      * Max amount of poap that a single user can mint.
      */
     per_address_limit: number;
+    /**
+     * Identifies a valid IPFS URI corresponding to where the assets and metadata of the POAPs are stored.
+     */
+    poap_uri: string;
     /**
      * Time at which the event begins.
      */
