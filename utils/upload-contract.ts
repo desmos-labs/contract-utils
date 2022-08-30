@@ -40,8 +40,6 @@ async function main() {
 
     console.log("Contract uploaded");
     console.log(uploadResult);
-
-    return 0;
 }
 
 main();
