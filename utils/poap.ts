@@ -76,7 +76,7 @@ async function main() {
         .requiredOption("--user <user>", "bech32 encoded address of the user of interest")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (options) => {
-            console.log(`Quering minted amount for ${options.user}`)
+            console.log(`Querying minted amount for ${options.user}`)
             // Query config
             const mintedAmount = await client.queryContractSmart(options.contract, {
                 minted_amount: {
