@@ -1,0 +1,8 @@
+# Ignore installe modules
+node_modules/
+
+# Ignore user configurations
+config.ts
+
+# Ignore cosmwasm contracts
+*.wasm
