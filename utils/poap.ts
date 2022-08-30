@@ -60,7 +60,7 @@ async function main() {
         .description("Queries the contract state")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (options) => {
-            console.log(`Quering state of ${options.contract}`)
+            console.log(`Querying state of ${options.contract}`)
             // Query config
             const config = await client.queryContractSmart(options.contract, {config: {}} as QueryMsg);
             console.log("Config", config);
