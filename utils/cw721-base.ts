@@ -227,7 +227,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             const approval = await client.queryContractSmart(options.contract, {
                 approval: { token_id: options.tokenId, spender: options.spender, include_expired: options.includeExpired },
             } as QueryMsgFor_Empty);
-            console.log("approval", JSON.stringify(approval));
+            console.log("approval", approval);
         });
 
     command
@@ -241,7 +241,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             const approvals = await client.queryContractSmart(options.contract, {
                 approvals: { token_id: options.tokenId, include_expired: options.includeExpired },
             } as QueryMsgFor_Empty);
-            console.log("approvals", JSON.stringify(approvals));
+            console.log("approvals", approvals);
         });
 
     command
