@@ -50,7 +50,7 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
             const response = await client.execute(account.address, options.contract, {
                 transfer_nft: {
                     recipient: options.recipient,
-                    token_id: options.token_id,
+                    token_id: options.tokenId,
                 },
             } as ExecuteMsg, "auto");
             console.log(response);
