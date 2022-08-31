@@ -10,10 +10,14 @@ export const derivationPath = makeDesmosPath();
 export const rpcEndpoint = "https://rpc.mainnet.desmos.network"
 // Testnet
 //export const rpcEndpoint = "https://rpc.morpheus.desmos.network"
+// Localnet
+//export const rpcEndpoint = "http://localhost:26657"
 
 // Default gas prices
 // Mainnet default gas price
 export const gasPrice = GasPrice.fromString("0.01udsm");
 // Testnet default gas price
 //export const gasPrice = GasPrice.fromString("0.01udaric");
+// Localnet default gas price
+//export const gasPrice = GasPrice.fromString("0.01stake");
 
