@@ -2,8 +2,8 @@ import { DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/des
 import { program, Command } from "commander";
 import * as Config from "./config"
 import { AccountData } from "@cosmjs/amino";
-import { InstantiateMsg, QueryMsgFor_Empty } from "@desmoslabs/contract-types/contracts/cw721-base";
-import { parseBool } from "./cli-parsing-utils";
+import { InstantiateMsg, QueryMsgFor_Empty, ExecuteMsg, Expiration } from "@desmoslabs/contract-types/contracts/cw721-base";
+import { parseBool, parseCWTimestamp } from "./cli-parsing-utils";
 
 async function main() {
     const signer = await OfflineSignerAdapter.fromMnemonic(SigningMode.DIRECT, Config.mnemonic);
@@ -32,19 +32,172 @@ async function main() {
             console.log("Contract initialized", initResult);
         })
 
-
-    buildQueryCommand(program, client)
+    buildExecuteCommands(program, client, account);
+    buildQueryCommands(program, client);
 
     console.log(`Executing as ${account.address}`);
     program.parse();
 }
 
-function buildExecuteCommand(program, client) {
-    const command = program.command("exectue")
-        .description("Subcommand to exectue the contract");
+function buildExecuteCommands(program: Command, client: DesmosClient, account: AccountData) {
+    program
+        .command("transfer")
+        .description("Move a token to another account without triggering actions")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--recipient <recipient>", "Address who recieved the token")
+        .requiredOption("--token-id <token-id>", "Id of the token")
+        .action(async (options) => {
+            const response = await client.execute(account.address, options.contract, {
+                transfer_nft: {
+                    recipient: options.recipient,
+                    token_id: options.token_id,
+                },
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
+
+    program
+        .command("send")
+        .description("transfer a token to a contract and trigger an action")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--recipient <recipient>", "Contract address who recieved the token on the receiving contract")
+        .requiredOption("--token-id <token-id>", "Id of the token")
+        .option("--msg <msg>", "Base64 encoded action message of the recipient contract would be executed")
+        .action(async (options) => {
+            const response = await client.execute(account.address, options.contract, {
+                send_nft: {
+                    contract: options.recipient,
+                    token_id: options.tokenId,
+                    msg: options.msg,
+                },
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
+
+    program
+        .command("approve")
+        .description("Allows operator to transfer/send the token from the owner's account before expiration time/height, no expiration time/height if expiration options is unset")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--spender <spender>", "Address who will be given the access to the token")
+        .requiredOption("--token-id <token-id>", "Id of the token")
+        .option("--expiration-time", "Timestamp to expire as RFC3339 encoded date example (2022-12-31T14:00:00)", parseCWTimestamp)
+        .option("--expiration-height", "Height to expire", parseInt)
+        .action(async (options) => {
+            let expiration: Expiration = { never: {} };
+            if (options.expirationTime !== undefined) {
+                expiration = { at_time: options.expirationTime }
+            } else if (options.expirationHeight !== undefined) {
+                expiration = { at_time: options.expirationHeight }
+            }
+            const response = await client.execute(account.address, options.contract, {
+                approve: {
+                    spender: options.spender,
+                    token_id: options.tokenId,
+                    expires: expiration,
+                }
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
+
+    program
+        .command("revoke")
+        .description("Remove previously granted Approval")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--spender <spender>", "Address who will be canceled the access of the token")
+        .requiredOption("--token-id <token-id>", "Id of the token")
+        .action(async (options) => {
+            const response = await client.execute(account.address, options.contract, {
+                revoke: {
+                    spender: options.spender,
+                    token_id: options.tokenId,
+                }
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
+
+    program
+        .command("approve-all")
+        .description("Allows operator to transfer/send any token from the owner's account before expiration time/height, no expiration time/height if expiration options is unset")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--operator <operator>", "Address who will be given the access of all tokens")
+        .option("--expiration-time", "Timestamp to expire as RFC3339 encoded date example (2022-12-31T14:00:00)", parseCWTimestamp)
+        .option("--expiration-height", "Height to expire", parseInt)
+        .action(async (options) => {
+            let expiration: Expiration = { never: {} };
+            if (options.expirationTime !== undefined) {
+                expiration = { at_time: options.expirationTime }
+            } else if (options.expirationHeight !== undefined) {
+                expiration = { at_time: options.expirationHeight }
+            }
+            const response = await client.execute(account.address, options.contract, {
+                approve_all: options.operator,
+                expires: expiration,
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
+
+    program
+        .command("revoke-all")
+        .description("Remove previously granted as operation permission by ApproveAll")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--operator <operator>", "Address who will be canceled the access of all tokens")
+        .action(async (options) => {
+            const response = await client.execute(account.address, options.contract, {
+                revoke_all: {
+                    operator: options.operator,
+                },
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
+
+    program
+        .command("mint")
+        .description("Mint a new NFT, can only be called by the contract minter")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--token-id <token-id>", "Id of the token")
+        .requiredOption("--owner <owner>", "Owner of the newly minter NFT")
+        .option("--token-uri <token-uri>", "Universal resource identifier for this NFT")
+        .option("--extension <extension>", "Any custom extension used by this contract")
+        .action(async (options) => {
+            const response = await client.execute(account.address, options.contract, {
+                mint: {
+                    token_id: options.tokenId,
+                    owner: options.owner,
+                    token_uri: options.tokenUri,
+                    extension: options.extension,
+                }
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
+
+    program
+        .command("burn")
+        .description("Burn an NFT the sender has access to")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--token-id <token-id>", "Id of the token")
+        .action(async (options) => {
+            const response = await client.execute(account.address, options.contract, {
+                burn: {
+                    token_id: options.tokenId,
+                }
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
+
+    program
+        .command("execute-extension")
+        .description("Execute the custom message")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--msg <msg>")
+        .action(async (options) => {
+            const response = await client.execute(account.address, options.contract, {
+                extension: { msg: options.msg },
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
 }
 
-function buildQueryCommand(program: Command, client: DesmosClient) {
+function buildQueryCommands(program: Command, client: DesmosClient) {
     const command = program.command("query")
         .description("Subcommand to query the contract");
 
@@ -173,7 +326,7 @@ function buildQueryCommand(program: Command, client: DesmosClient) {
         .action(async (options) => {
             console.log(`Queries all tokens owned by ${options.owner}`);
             const tokens = await client.queryContractSmart(options.contract, {
-                all_tokens: { owner: options.owner, start_after: options.start_after, limit: options.limit },
+                all_tokens: { owner: options.owner, start_after: options.startAfter, limit: options.limit },
             } as QueryMsgFor_Empty);
             console.log("tokens", tokens);
         });
@@ -187,7 +340,7 @@ function buildQueryCommand(program: Command, client: DesmosClient) {
         .action(async (options) => {
             console.log(`Queries all tokens`);
             const tokens = await client.queryContractSmart(options.contract, {
-                all_tokens: { start_after: options.start_after, limit: options.limit },
+                all_tokens: { start_after: options.startAfter, limit: options.limit },
             } as QueryMsgFor_Empty);
             console.log("tokens", tokens);
         });
@@ -202,6 +355,19 @@ function buildQueryCommand(program: Command, client: DesmosClient) {
                 minter: {},
             } as QueryMsgFor_Empty);
             console.log("minter", minter);
+        });
+
+    command
+        .command("extension")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--msg <msg>")
+        .description("Queries with custom messages")
+        .action(async (options) => {
+            console.log(`Queries with the custom message`);
+            const result = await client.queryContractSmart(options.contract, {
+                extension: { msg: options.msg },
+            } as QueryMsgFor_Empty);
+            console.log("result", result);
         });
 }
 
