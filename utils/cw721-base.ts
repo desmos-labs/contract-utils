@@ -80,14 +80,14 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .requiredOption("--spender <spender>", "Address who will be given the access to the token")
         .requiredOption("--token-id <token-id>", "Id of the token")
-        .option("--expiration-time", "Timestamp to expire as RFC3339 encoded date example (2022-12-31T14:00:00)", parseCWTimestamp)
-        .option("--expiration-height", "Height to expire", parseInt)
+        .option("--expiration-time <expiration-time>", "Timestamp to expire as RFC3339 encoded date example (2022-12-31T14:00:00)", parseCWTimestamp)
+        .option("--expiration-height <expiration-height>", "Height to expire", parseInt)
         .action(async (options) => {
             let expiration: Expiration = { never: {} };
             if (options.expirationTime !== undefined) {
                 expiration = { at_time: options.expirationTime }
             } else if (options.expirationHeight !== undefined) {
-                expiration = { at_time: options.expirationHeight }
+                expiration = { at_height: options.expirationHeight }
             }
             const response = await client.execute(account.address, options.contract, {
                 approve: {
@@ -120,14 +120,14 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .description("Allows operator to transfer/send any token from the owner's account before expiration time/height, no expiration time/height if expiration options is unset")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .requiredOption("--operator <operator>", "Address who will be given the access of all tokens")
-        .option("--expiration-time", "Timestamp to expire as RFC3339 encoded date example (2022-12-31T14:00:00)", parseCWTimestamp)
-        .option("--expiration-height", "Height to expire", parseInt)
+        .option("--expiration-time <expiration-time>", "Timestamp to expire as RFC3339 encoded date example (2022-12-31T14:00:00)", parseCWTimestamp)
+        .option("--expiration-height <expiration-height>", "Height to expire", parseInt)
         .action(async (options) => {
             let expiration: Expiration = { never: {} };
             if (options.expirationTime !== undefined) {
                 expiration = { at_time: options.expirationTime }
             } else if (options.expirationHeight !== undefined) {
-                expiration = { at_time: options.expirationHeight }
+                expiration = { at_height: options.expirationHeight }
             }
             const response = await client.execute(account.address, options.contract, {
                 approve_all: options.operator,
@@ -227,7 +227,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             const approval = await client.queryContractSmart(options.contract, {
                 approval: { token_id: options.tokenId, spender: options.spender, include_expired: options.includeExpired },
             } as QueryMsgFor_Empty);
-            console.log("approval", approval);
+            console.log("approval", JSON.stringify(approval));
         });
 
     command
@@ -241,7 +241,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             const approvals = await client.queryContractSmart(options.contract, {
                 approvals: { token_id: options.tokenId, include_expired: options.includeExpired },
             } as QueryMsgFor_Empty);
-            console.log("approvals", approvals);
+            console.log("approvals", JSON.stringify(approvals));
         });
 
     command
