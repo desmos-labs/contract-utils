@@ -16,3 +16,4 @@ To execute the scripts then run `yarn utils:$SCRIP_NAME` from the root directory
 ## Scripts
 * `upload-contract`: Allow to upload a compiled CosmWASM contract to the chain.
 * `poap`: Utility script to interact with the poap contract available [here](https://github.com/desmos-labs/desmos-contracts/tree/master/contracts/poap).
+* `poap-manager`: Utility script to interact with the poap manager contract available [here](https://github.com/desmos-labs/desmos-contracts/tree/master/contracts/poap-manager).
