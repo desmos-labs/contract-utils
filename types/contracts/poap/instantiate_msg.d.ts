@@ -1,4 +1,4 @@
-import { EventInfo_1, Uint64 } from "./shared-types";
+import { Timestamp, Uint64 } from "./shared-types";
 
 export interface InstantiateMsg {
 /**
@@ -16,7 +16,7 @@ cw721_initiate_msg: InstantiateMsg1
 /**
  * Information about the event.
  */
-event_info: EventInfo_1
+event_info: EventInfo
 /**
  * Address of who can call the [`ExecuteMsg::MintTo`] other then the admin.
  */
@@ -36,5 +36,28 @@ name: string
  * Symbol of the NFT contract
  */
 symbol: string
+[k: string]: unknown
+}
+export interface EventInfo {
+/**
+ * User that created the event.
+ */
+creator: string
+/**
+ * Time at which the event ends.
+ */
+end_time: Timestamp
+/**
+ * Max amount of poap that a single user can mint.
+ */
+per_address_limit: number
+/**
+ * Identifies a valid IPFS URI corresponding to where the assets and metadata of the POAPs are stored.
+ */
+poap_uri: string
+/**
+ * Time at which the event begins.
+ */
+start_time: Timestamp
 [k: string]: unknown
 }
