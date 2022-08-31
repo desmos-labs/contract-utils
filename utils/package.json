@@ -9,7 +9,8 @@
   "private": true,
   "scripts": {
     "upload-contract": "ts-node upload-contract.ts",
-    "poap": "ts-node poap.ts"
+    "poap": "ts-node poap.ts",
+    "poap-manager": "ts-node poap-manager.ts"
   },
   "dependencies": {
     "@cosmjs/crypto": "^0.28.11",
