@@ -27,7 +27,6 @@ async function main() {
         .requiredOption("--address-limit <address_limit>", "Max number of poap that an user can receive", parseInt)
         .requiredOption("--poap-uri <poap_uri>", "IPFS uri where the event's metadata are stored", parseIpfsUri)
         .option("--creator <creator>", "Bech32 address of who is creating the event", account!.address)
-        .option("--minter <minter>", "Bech32 address of who will have the minting rights", account!.address)
         .option("--admin <admin>", "Bech32 address of who will have the contract admin rights", account!.address)
         .action(async (options) => {
             console.log(`Initializing contract with code ${options.codeId}`);
@@ -36,7 +35,8 @@ async function main() {
                 poap_code_id: options.poapCodeId.toString(),
                 poap_instantiate_msg: {
                     admin: options.admin,
-                    minter: options.minter,
+                    // Just a string since this will be replaced from the contract.
+                    minter: "contract-address",
                     cw721_code_id: options.cw721CodeId.toString(),
                     event_info: {
                         creator: options.creator,
@@ -47,7 +47,8 @@ async function main() {
                     },
                     cw721_initiate_msg: {
                         name: options.name,
-                        minter: options.minter,
+                        // Just a string since this will be replaced from the contract.
+                        minter: "contract-address",
                         symbol: options.symbol
                     }
                 }
