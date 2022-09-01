@@ -2,7 +2,7 @@ import { DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/des
 import { program, Command } from "commander";
 import * as Config from "./config"
 import { AccountData } from "@cosmjs/amino";
-import { InstantiateMsg, QueryMsgFor_Empty, ExecuteMsg, Expiration } from "@desmoslabs/contract-types/contracts/cw721-base";
+import { InstantiateMsg, QueryMsgFor_Empty, ExecuteMsg, Expiration } from "@desmoslabs/contract-types/contracts/cw721-poap";
 import { parseBool, parseCWTimestamp } from "./cli-parsing-utils";
 
 async function main() {
@@ -157,14 +157,15 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .requiredOption("--token-id <token-id>", "Id of the token")
         .requiredOption("--owner <owner>", "Owner of the newly minter NFT")
         .option("--token-uri <token-uri>", "Universal resource identifier for this NFT")
-        .option("--extension <extension>", "Any custom extension used by this contract")
         .action(async (options) => {
             const response = await client.execute(account.address, options.contract, {
                 mint: {
                     token_id: options.tokenId,
                     owner: options.owner,
                     token_uri: options.tokenUri,
-                    extension: options.extension,
+                    extension: {
+                        claimer: options.owner
+                    },
                 }
             } as ExecuteMsg, "auto");
             console.log(response);
@@ -184,17 +185,6 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
             console.log(response);
         });
 
-    program
-        .command("execute-extension")
-        .description("Execute the custom message")
-        .requiredOption("--contract <contract>", "bech32 encoded contract address")
-        .requiredOption("--msg <msg>")
-        .action(async (options) => {
-            const response = await client.execute(account.address, options.contract, {
-                extension: { msg: options.msg },
-            } as ExecuteMsg, "auto");
-            console.log(response);
-        });
 }
 
 function buildQueryCommands(program: Command, client: DesmosClient) {
@@ -357,18 +347,6 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log("minter", minter);
         });
 
-    command
-        .command("extension")
-        .requiredOption("--contract <contract>", "bech32 encoded contract address")
-        .requiredOption("--msg <msg>")
-        .description("Queries with custom messages")
-        .action(async (options) => {
-            console.log(`Queries with the custom message`);
-            const result = await client.queryContractSmart(options.contract, {
-                extension: { msg: options.msg },
-            } as QueryMsgFor_Empty);
-            console.log("result", result);
-        });
 }
 
 main();
