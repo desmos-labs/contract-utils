@@ -34,7 +34,28 @@ export type Timestamp = Uint64
  * let b = Uint64::from(70u32); assert_eq!(b.u64(), 70); ```
  */
 export type Uint64 = string
+/**
+ * A human readable address.
+ * 
+ * In Cosmos, this is typically bech32 encoded. But for multi-chain smart contracts no assumptions should be made other than being UTF-8 encoded and of reasonable length.
+ * 
+ * This type represents a validated address. It can be created in the following ways 1. Use `Addr::unchecked(input)` 2. Use `let checked: Addr = deps.api.addr_validate(input)?` 3. Use `let checked: Addr = deps.api.addr_humanize(canonical_addr)?` 4. Deserialize from JSON. This must only be done from JSON that was validated before such as a contract's state. `Addr` must not be used in messages sent by the user because this would result in unvalidated instances.
+ * 
+ * This type is immutable. If you really need to mutate it (Really? Are you sure?), create a mutable copy using `let mut mutable = Addr::to_string()` and operate on that `String` instance.
+ */
+export type Addr = string
 
+export interface AllNftInfoResponseFor_Metadata {
+/**
+ * Who can transfer the token
+ */
+access: OwnerOfResponse
+/**
+ * Data on the token itself,
+ */
+info: NftInfoResponseFor_Metadata
+[k: string]: unknown
+}
 export interface OwnerOfResponse {
 /**
  * If set this address is approved to transfer/send the token as well
@@ -55,5 +76,20 @@ expires: Expiration
  * Account that can transfer/send the token
  */
 spender: string
+[k: string]: unknown
+}
+export interface NftInfoResponseFor_Metadata {
+/**
+ * You can add any custom metadata here when you extend cw721-base
+ */
+extension: Metadata
+/**
+ * Universal resource identifier for this NFT Should point to a JSON file that conforms to the ERC721 Metadata JSON Schema
+ */
+token_uri?: (string | null)
+[k: string]: unknown
+}
+export interface Metadata {
+claimer: Addr
 [k: string]: unknown
 }

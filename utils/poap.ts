@@ -86,6 +86,35 @@ async function main() {
             console.log("mintedAmount", mintedAmount);
         });
 
+    queryCommand
+        .command("all-nft-info")
+        .description("Queries the result including both nft info and ownerof info")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--token-id <token-id>", "Id of the token to query")
+        .option("--include-expired <include-expired>", "Unset or false will filter out expired approvals", parseBool, false)
+        .action(async (options) => {
+            console.log(`Querying all nft info of token id ${options.tokenId}`);
+            const info = await client.queryContractSmart(options.contract, {
+                all_nft_info: { token_id: options.tokenId, include_expired: options.includeExpired },
+            } as QueryMsg);
+            console.log("All NFT info", info)
+        });
+
+    queryCommand
+    .command("tokens")
+    .description("Queries all the tokens owned by the given address")
+    .requiredOption("--contract <contract>", "bech32 encoded contract address")
+    .requiredOption("--owner <owner>", "Address of the owner to query")
+    .option("--start-after <start-after>", "")
+    .option("--limit <limit>", "Limitation to list the number of tokens", parseInt, 0)
+    .action(async (options) => {
+        console.log(`Queries all tokens owned by ${options.owner}`);
+        const tokens = await client.queryContractSmart(options.contract, {
+            tokens: { owner: options.owner, start_after: options.startAfter, limit: options.limit },
+        } as QueryMsg);
+        console.log("tokens", tokens);
+    });
+
     program.command("mint-enabled")
         .description("Enable/disable the possibility to mint a poap from the users")
         .argument("<boolean>", "true to allow mint from the users, false to disable", parseBool)
