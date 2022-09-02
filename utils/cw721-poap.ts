@@ -240,7 +240,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .requiredOption("--owner <owner>", "Address of the owner")
         .option("--include-expired <include-expired>", "Unset or false will filter out expired approvals", parseBool, false)
-        .option("--start-after <start-after>", "Position in address where operators start after", "")
+        .option("--start-after <start-after>", "Position in address where operators start after")
         .option("--limit <limit>", "Limitation to list the number of operators", parseInt, 0)
         .action(async (options) => {
             console.log(`Querying operators of the owner ${options.owner}`);
@@ -311,12 +311,12 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
         .description("Queries all the tokens owned by the given address")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .requiredOption("--owner <owner>", "Address of the owner to query")
-        .option("--start-after <start-after>", "")
+        .option("--start-after <start-after>", "Position in token id where tokens start after")
         .option("--limit <limit>", "Limitation to list the number of tokens", parseInt, 0)
         .action(async (options) => {
             console.log(`Queries all tokens owned by ${options.owner}`);
             const tokens = await client.queryContractSmart(options.contract, {
-                all_tokens: { owner: options.owner, start_after: options.startAfter, limit: options.limit },
+                tokens: { owner: options.owner, start_after: options.startAfter, limit: options.limit },
             } as QueryMsgFor_Empty);
             console.log("tokens", tokens);
         });
@@ -325,7 +325,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
         .command("all-tokens")
         .description("Queries all tokens ids")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
-        .option("--start-after <start-after>", "")
+        .option("--start-after <start-after>", "Position in token id where tokens start after")
         .option("--limit <limit>", "Limitation to list the number of tokens")
         .action(async (options) => {
             console.log(`Queries all tokens`);
