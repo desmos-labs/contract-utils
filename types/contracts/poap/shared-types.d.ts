@@ -32,33 +32,3 @@ export type Timestamp = Uint64;
  * let b = Uint64::from(70u32); assert_eq!(b.u64(), 70); ```
  */
 export type Uint64 = string;
-export interface EventInfo {
-    [k: string]: unknown;
-    creator: Addr;
-    end_time: Timestamp;
-    poap_uri: string;
-    start_time: Timestamp;
-}
-export interface EventInfo_1 {
-    [k: string]: unknown;
-    /**
-     * User that created the event.
-     */
-    creator: string;
-    /**
-     * Time at which the event ends.
-     */
-    end_time: Timestamp;
-    /**
-     * Max amount of poap that a single user can mint.
-     */
-    per_address_limit: number;
-    /**
-     * Identifies a valid IPFS URI corresponding to where the assets and metadata of the POAPs are stored.
-     */
-    poap_uri: string;
-    /**
-     * Time at which the event begins.
-     */
-    start_time: Timestamp;
-}

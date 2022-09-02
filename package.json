@@ -6,6 +6,7 @@
   ],
   "scripts": {
     "utils:poap": "yarn workspace contracts-utils poap",
+    "utils:poap-manager": "yarn workspace contracts-utils poap-manager",
     "utils:upload-contract": "yarn workspace contracts-utils upload-contract"
   },
   "packageManager": "yarn@3.2.2"
