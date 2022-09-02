@@ -27,6 +27,14 @@ async function main() {
             console.log("Downloading archive from", url);
             const zip = new AdmZip(await download(url));
 
+            // Clean up schemas dir
+            fs.readdirSync('schemas').forEach(dir => {
+                const path = `schemas/${dir}`;
+                console.log(`Removing ${path}`);
+                fs.rmSync(path, { recursive: true, force: true });
+            });
+
+
             zip.forEach((f) => {
                 if (!f.isDirectory) {
                     const [, , contract, dir, file] = f.entryName.split("/");
