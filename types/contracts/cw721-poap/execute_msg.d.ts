@@ -1,4 +1,4 @@
-import { Empty, Expiration } from "./shared-types";
+import { Empty, Expiration, Metadata } from "./shared-types";
 
 /**
  * This is like Cw721ExecuteMsg but we add a Mint command for an owner to make this stand-alone. You will likely want to remove mint and use other control logic in any contract that inherits this.
@@ -41,7 +41,7 @@ operator: string
 [k: string]: unknown
 }
 } | {
-mint: MintMsgFor_Nullable_Empty
+mint: MintMsgFor_Metadata
 } | {
 burn: {
 token_id: string
@@ -60,11 +60,11 @@ msg: Empty
  */
 export type Binary = string
 
-export interface MintMsgFor_Nullable_Empty {
+export interface MintMsgFor_Metadata {
 /**
  * Any custom extension used by this contract
  */
-extension?: (Empty | null)
+extension: Metadata
 /**
  * The owner of the newly minter NFT
  */
