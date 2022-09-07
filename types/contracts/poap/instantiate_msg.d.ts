@@ -12,7 +12,7 @@ cw721_code_id: Uint64
 /**
  * Initialization message that will be sent to the CW721 contract.
  */
-cw721_initiate_msg: InstantiateMsg1
+cw721_instantiate_msg: InstantiateMsg1
 /**
  * Information about the event.
  */

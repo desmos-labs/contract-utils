@@ -45,7 +45,7 @@ async function main() {
                         end_time: options.end,
                         per_address_limit: options.addressLimit
                     },
-                    cw721_initiate_msg: {
+                    cw721_instantiate_msg: {
                         name: options.name,
                         // Just a string since this will be replaced from the contract.
                         minter: "contract-address",
