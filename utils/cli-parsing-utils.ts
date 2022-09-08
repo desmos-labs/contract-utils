@@ -79,7 +79,7 @@ export function parseCoin(rawCoin: string): { denom: string, amount: string } {
 
     // Find the first non numeric char that is where the denom begins
     for (startOfDenom = 0, denomFound = false; startOfDenom < rawCoin.length && denomFound == false; startOfDenom++) {
-        if(!isNumber(rawCoin[startOfDenom])) {
+        if('abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUVXYZ'.indexOf(rawCoin[startOfDenom]) !== -1) {
             denomFound = true;
             break;
         }
