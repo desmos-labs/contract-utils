@@ -1,12 +1,12 @@
 import { DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/desmjs";
-import { program } from "commander";
+import {InvalidArgumentError, InvalidOptionArgumentError, program} from "commander";
 import * as Config from "./config"
 import {AccountData} from "@cosmjs/amino";
 import {
     ExecuteMsg,
     InstantiateMsg,
     QueryConfigResponse,
-    QueryMsg, Tip,
+    QueryMsg, ServiceFee, Tip,
     TipsResponse
 } from "@desmoslabs/contract-types/contracts/tips";
 import {parseCoinList} from "./cli-parsing-utils";
@@ -23,6 +23,21 @@ function logTips(tips: Tip[]){
     })
 }
 
+function parsePercentageFee(number: string): { value: string, decimals: number } {
+    const trimmed = number.trim();
+    const parsed = parseFloat(trimmed);
+    if (isNaN(parsed)){
+        throw new InvalidArgumentError("The provided percentage value is not a number");
+    }
+
+    const [_, decimal] = number.split(".");
+    return {
+        value: Math.ceil(parsed * Math.pow(10, decimal?.length ?? 0)).toString(),
+        decimals: decimal?.length ?? 0
+    }
+
+}
+
 async function main() {
     const signer = await OfflineSignerAdapter.fromMnemonic(SigningMode.DIRECT, Config.mnemonic);
     const client = await DesmosClient.connectWithSigner(Config.rpcEndpoint, signer, {
@@ -34,25 +49,37 @@ async function main() {
         .description("Utility script to interact with the tips contract");
 
     program.command("init")
-        .description("Initialize a new instance of a cw721 base contract")
+        .description("Initialize a new instance of a tips contract")
         .requiredOption("--code-id <code-id>", "Id of the contract to initialize", parseInt)
         .requiredOption("--subspace <subspace>", "Application which is deploying the contract", parseInt)
-        .requiredOption("--saved-tips-threshold <saved-tips-threshold>", "The number of records saved of a user tips histor", parseInt)
-        .requiredOption("--fixed-fee <fixed-fee>", "Fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
+        .requiredOption("--saved-tips-threshold <saved-tips-threshold>", "The number of records saved of a user tips history", parseInt)
         .requiredOption("--name <name>", "Contract name")
+        .option("--fixed-fee <coins>", "Fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
+        .option("--percentage-fee <value-decimals>", "Percentage fee applied to the tip. ex 1", parsePercentageFee)
         .option("--admin <admin>", "Bech32 address of who will have the admin rights", account!.address)
         .action(async (options) => {
-            console.log(`Initializing tips contract`, options);
-            console.log(`Initializing tips contract ${options.codeId}`);
+            if (options.fixedFee === undefined && options.percentageFee === undefined) {
+                throw new InvalidOptionArgumentError("Pleas provide --fixed-fee or --percentage-fee");
+            }
+
+            let fee;
+
+            if (options.fixedFee !== undefined) {
+                fee = {
+                    fixed: {
+                        amount: options.fixedFee
+                    }
+                } as ServiceFee
+            } else {
+                fee = {
+                    percentage: options.percentageFee
+                } as ServiceFee
+            }
 
             let instantiateMsg: InstantiateMsg = {
                 admin: options.admin,
                 saved_tips_threshold: options.savedTipsThreshold,
-                service_fee: {
-                    fixed: {
-                        amount: options.fixedFee
-                    }
-                },
+                service_fee: fee,
                 subspace_id: options.subspace.toString()
             };
             const initResult = await client.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
