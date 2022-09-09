@@ -1,5 +1,5 @@
-import { DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/desmjs";
-import {InvalidArgumentError, InvalidOptionArgumentError, program} from "commander";
+import {DesmosClient, OfflineSignerAdapter, SigningMode} from "@desmoslabs/desmjs";
+import {InvalidArgumentError, program} from "commander";
 import * as Config from "./config"
 import {AccountData} from "@cosmjs/amino";
 import {
@@ -101,11 +101,107 @@ async function main() {
             console.log(response);
         })
 
+    program.command("tip-post")
+        .description("send a tip to the author of a post to show support towards a specific content")
+        .argument("<post-id>", "id of the post created by whoever will receive the tip", parseInt)
+        .requiredOption("--coins <coins>", "amount of coins to tip to the user. Comma separated list of coins ex: 100udsm,100uatom", parseCoinList)
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .action(async (postId, options) => {
+            console.log(`Sending tip to the author of ${postId}`);
+            const response = await client.execute(account.address, options.contract, {
+                update_service_fee: {
+                    target: {
+                        content_target: {
+                            post_id: postId.toString(),
+                        }
+                    }
+                }
+            } as ExecuteMsg, "auto", undefined, options.coins);
+            console.log(response);
+        })
+
+    program.command("update-fee")
+        .description("updates the fee to be payed to send a tip")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .option("--fixed <coins>", "fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
+        .option("--percentage <value-decimals>", "percentage fee applied to the tip. ex 1", parsePercentageFee)
+        .action(async (options) => {
+            let new_fee = null;
+
+            if (options.fixed !== undefined) {
+                console.log("Updating fee to fixed, new amount:", options.fixed);
+                new_fee = {
+                    fixed: {
+                        amount: options.fixed
+                    }
+                } as ServiceFee
+            } else if (options.percentage !== undefined) {
+                console.log("Updating fee to percentage, new value:", options.percentage);
+                new_fee = {
+                    percentage: options.percentage
+                } as ServiceFee
+            } else {
+                console.log("Removing service fee");
+            }
+
+            const response = await client.execute(account.address, options.contract, {
+                update_service_fee: {
+                    new_fee
+                }
+            } as ExecuteMsg, "auto", undefined, options.coins);
+            console.log(response);
+        });
+
+    program.command("update-admin")
+        .description("updates who have the admin rights over the contract")
+        .argument("<address>", "new admin's bech32 address")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .action(async (new_admin, options) => {
+            console.log(`Setting new admin address to ${new_admin}`);
+
+            const response = await client.execute(account.address, options.contract, {
+                update_admin: {
+                    new_admin
+                }
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
+
+    program.command("update-tips-record-threshold")
+        .description("updates the amount of tips records stored from the contract")
+        .argument("<new-threshold>", "new tips record threshold", parseInt)
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .action(async (new_threshold, options) => {
+            console.log(`Setting new tips record threshold ${new_threshold}`);
+
+            const response = await client.execute(account.address, options.contract, {
+                update_saved_tips_record_threshold: {
+                    new_threshold
+                }
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
+
+    program.command("claim-fee")
+        .description("claim the fee collected from the contract")
+        .argument("<receiver>", "bech32 address to which they will be sent")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .action(async (receiver, options) => {
+            console.log(`Claiming contract fee and send to ${receiver}`);
+
+            const response = await client.execute(account.address, options.contract, {
+                claim_fees: {
+                    receiver
+                }
+            } as ExecuteMsg, "auto");
+            console.log(response);
+        });
+
     const queryCommand = program.command("query")
-        .description("Subcommand to query the contract");
+        .description("subcommand to query the contract");
 
     queryCommand.command("config")
-        .requiredOption("--contract <contract>", "Bech32 encoded contract address")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (options) => {
             const response = await client.queryContractSmart(options.contract, {
                 config: {}
@@ -114,18 +210,17 @@ async function main() {
             console.log("Admin", response.admin);
             console.log("Subspace", response.subspace_id);
             console.log("saved_tips_record_threshold:", response.saved_tips_record_threshold);
-            const service_fee = response.service_fee as {fixed: {amount: any}};
-            console.log("fixed fees", service_fee.fixed.amount);
+            console.log("fees", JSON.stringify(response.service_fee));
         })
 
     queryCommand.command("user-sent-tips")
-        .description("Queries the tips sent from an user")
-        .requiredOption("--contract <contract>", "Bech32 encoded contract address")
-        .requiredOption("--sender <sender>", "Sender's bech32 encoded address")
-        .action(async (options) => {
+        .description("queries the tips sent from an user")
+        .argument("<sender>", "sender's bech32 encoded address")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .action(async (sender, options) => {
             const response = await client.queryContractSmart(options.contract, {
                 user_sent_tips: {
-                    user: options.sender
+                    user: sender
                 }
             } as QueryMsg) as TipsResponse;
 
@@ -133,13 +228,13 @@ async function main() {
         })
 
     queryCommand.command("user-received-tips")
-        .description("Queries the tips received from an user")
-        .requiredOption("--contract <contract>", "Bech32 encoded contract address")
-        .requiredOption("--receiver <sender>", "Receiver's bech32 encoded address")
-        .action(async (options) => {
+        .description("queries the tips received from an user")
+        .argument("<receiver>", "receiver's bech32 encoded address")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .action(async (receiver, options) => {
             const response = await client.queryContractSmart(options.contract, {
                 user_received_tips: {
-                    user: options.receiver
+                    user: receiver
                 }
             } as QueryMsg) as TipsResponse;
 
@@ -147,13 +242,13 @@ async function main() {
         })
 
     queryCommand.command("post-received-tips")
-        .description("Queries the tips sent to a post")
-        .requiredOption("--contract <contract>", "Bech32 encoded contract address")
-        .requiredOption("--post-id <post-id>", "Id of the post of interest")
-        .action(async (options) => {
+        .description("queries the tips sent to a post")
+        .argument("<post-id>", "id of the post of interest")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .action(async (postId, options) => {
             const response = await client.queryContractSmart(options.contract, {
                 post_received_tips: {
-                    post_id: options.postId.toString()
+                    post_id: postId.toString()
                 }
             } as QueryMsg) as TipsResponse;
 
