@@ -11,7 +11,7 @@ import {
 } from "@desmoslabs/contract-types/contracts/tips";
 import {parseCoinList} from "./cli-parsing-utils";
 
-function logTips(tips: Tip[]){
+function logTips(tips: Tip[]) {
     tips.forEach((tip, i, array) => {
         console.log("Tip", i);
         console.log("Sender", tip.sender);
@@ -26,7 +26,7 @@ function logTips(tips: Tip[]){
 function parsePercentageFee(number: string): { value: string, decimals: number } {
     const trimmed = number.trim();
     const parsed = parseFloat(trimmed);
-    if (isNaN(parsed)){
+    if (isNaN(parsed)) {
         throw new InvalidArgumentError("The provided percentage value is not a number");
     }
 
@@ -49,20 +49,16 @@ async function main() {
         .description("Utility script to interact with the tips contract");
 
     program.command("init")
-        .description("Initialize a new instance of a tips contract")
-        .requiredOption("--code-id <code-id>", "Id of the contract to initialize", parseInt)
-        .requiredOption("--subspace <subspace>", "Application which is deploying the contract", parseInt)
-        .requiredOption("--saved-tips-threshold <saved-tips-threshold>", "The number of records saved of a user tips history", parseInt)
-        .requiredOption("--name <name>", "Contract name")
-        .option("--fixed-fee <coins>", "Fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
-        .option("--percentage-fee <value-decimals>", "Percentage fee applied to the tip. ex 1", parsePercentageFee)
-        .option("--admin <admin>", "Bech32 address of who will have the admin rights", account!.address)
+        .description("initialize a new instance of a tips contract")
+        .requiredOption("--code-id <code-id>", "id of the contract to initialize", parseInt)
+        .requiredOption("--subspace <subspace>", "application which is deploying the contract", parseInt)
+        .requiredOption("--saved-tips-threshold <saved-tips-threshold>", "the number of records saved of a user tips history", parseInt)
+        .requiredOption("--name <name>", "contract name")
+        .option("--fixed-fee <coins>", "fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
+        .option("--percentage-fee <value-decimals>", "percentage fee applied to the tip. ex 1", parsePercentageFee)
+        .option("--admin <admin>", "bech32 address of who will have the admin rights", account!.address)
         .action(async (options) => {
-            if (options.fixedFee === undefined && options.percentageFee === undefined) {
-                throw new InvalidOptionArgumentError("Pleas provide --fixed-fee or --percentage-fee");
-            }
-
-            let fee;
+            let fee = null;
 
             if (options.fixedFee !== undefined) {
                 fee = {
@@ -70,7 +66,7 @@ async function main() {
                         amount: options.fixedFee
                     }
                 } as ServiceFee
-            } else {
+            } else if (options.percentageFee !== undefined) {
                 fee = {
                     percentage: options.percentageFee
                 } as ServiceFee
