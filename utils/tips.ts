@@ -83,18 +83,21 @@ async function main() {
         })
 
     program.command("tip-user")
-        .description("Send a tip to an user")
-        .requiredOption("--coins <coins>", "Amount of coins to tip to the user. Comma separated list of coins ex: 100udsm,100uatom", parseCoinList)
-        .requiredOption("--receiver <receiver>", "Bech32 encoded address of the user who will receive the tip")
-        .requiredOption("--contract <contract>", "Bech32 encoded contract address")
-        .action(async (options) => {
-            const response = await client.execute(account.address, options.contract, {send_tip: {
-                target: {
-                    user_target: {
-                        receiver: options.receiver,
+        .description("send a tip to an user")
+        .argument("<receiver>", "bech32 encoded address of the user who will receive the tip")
+        .requiredOption("--coins <coins>", "amount of coins to tip to the user. Comma separated list of coins ex: 100udsm,100uatom", parseCoinList)
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .action(async (receiver, options) => {
+            console.log(`Sending tip to ${receiver}`)
+            const response = await client.execute(account.address, options.contract, {
+                send_tip: {
+                    target: {
+                        user_target: {
+                            receiver: receiver,
+                        }
                     }
                 }
-                }} as ExecuteMsg, "auto", undefined, options.coins);
+            } as ExecuteMsg, "auto", undefined, options.coins);
             console.log(response);
         })
 
