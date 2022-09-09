@@ -12,7 +12,7 @@ saved_tips_record_threshold: number
 /**
  * Fee required to execute [`ExecuteMsg::SendTip`].
  */
-service_fee: ServiceFee
+service_fee?: (ServiceFee | null)
 /**
  * Application that distributed the contract.
  */

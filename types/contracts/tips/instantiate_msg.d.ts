@@ -10,9 +10,9 @@ admin: string
  */
 saved_tips_threshold: number
 /**
- * Fee that the users need to pay to use the contract.
+ * Fee that the users need to pay to use the contract. If `None` no fees will be collected from the tipped amount.
  */
-service_fee: ServiceFee
+service_fee?: (ServiceFee | null)
 /**
  * Application which is deploying the contract.
  */

@@ -11,9 +11,9 @@ target: Target
 } | {
 update_service_fee: {
 /**
- * New service fee required to execute [`ExecuteMsg::SendTip`].
+ * New service fee required to execute [`ExecuteMsg::SendTip`]. If `None` no fees will be collected from the tipped amount.
  */
-new_fee: ServiceFee
+new_fee?: (ServiceFee | null)
 [k: string]: unknown
 }
 } | {
