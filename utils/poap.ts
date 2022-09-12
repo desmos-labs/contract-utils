@@ -41,7 +41,7 @@ async function main() {
                     end_time: options.end,
                     per_address_limit: options.addressLimit
                 },
-                cw721_initiate_msg: {
+                cw721_instantiate_msg: {
                     name: options.name,
                     minter: options.minter,
                     symbol: options.symbol
