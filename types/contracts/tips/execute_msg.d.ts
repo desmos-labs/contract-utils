@@ -1,7 +1,11 @@
-import { ServiceFee, Uint64 } from "./shared-types";
+import { Coin, ServiceFee, Uint64 } from "./shared-types";
 
 export type ExecuteMsg = ({
 send_tip: {
+/**
+ * Amount from which fees will be calculated.
+ */
+amount: Coin[]
 /**
  * Tip target.
  */
@@ -25,11 +29,11 @@ new_admin: string
 [k: string]: unknown
 }
 } | {
-update_saved_tips_record_threshold: {
+update_saved_tips_record_size: {
 /**
- * New tip records threshold.
+ * New tip records size.
  */
-new_threshold: number
+new_size: number
 [k: string]: unknown
 }
 } | {

@@ -8,7 +8,7 @@ admin: Addr
 /**
  * The number of records saved of a user tips history.
  */
-saved_tips_record_threshold: number
+saved_tips_record_size: number
 /**
  * Fee required to execute [`ExecuteMsg::SendTip`].
  */
