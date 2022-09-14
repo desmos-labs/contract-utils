@@ -1,5 +1,5 @@
-import {DesmosClient, OfflineSignerAdapter, SigningMode} from "@desmoslabs/desmjs";
-import {InvalidArgumentError, program} from "commander";
+import {Coin, DesmosClient, OfflineSignerAdapter, SigningMode} from "@desmoslabs/desmjs";
+import {program} from "commander";
 import * as Config from "./config"
 import {AccountData} from "@cosmjs/amino";
 import {
@@ -23,19 +23,35 @@ function logTips(tips: Tip[]) {
     })
 }
 
-function parsePercentageFee(number: string): { value: string, decimals: number } {
-    const trimmed = number.trim();
-    const parsed = parseFloat(trimmed);
-    if (isNaN(parsed)) {
-        throw new InvalidArgumentError("The provided percentage value is not a number");
-    }
+function mergeCoins(tipAmount: Coin[]): Coin[] {
+    let coins: Record<string, number> = {};
 
-    const [_, decimal] = number.split(".");
-    return {
-        value: Math.ceil(parsed * Math.pow(10, decimal?.length ?? 0)).toString(),
-        decimals: decimal?.length ?? 0
-    }
+    tipAmount.forEach(coin => {
+        const value = coins[coin.denom];
+        if(value === undefined) {
+            coins[coin.denom] = parseInt(coin.amount);
+        } else {
+            coins[coin.denom] = value + parseInt(coin.amount);
+        }
+    })
 
+    return Object.keys(coins).map(k => {
+        return { denom: k, amount: coins[k].toString() } as Coin
+    })
+}
+
+function computeFees(tips: Coin[], serviceFee: any): Coin[] {
+    if (serviceFee?.fixed !== undefined) {
+        return serviceFee.fixed.amount;
+    } else if (serviceFee?.percentage !== undefined) {
+        const percentage = parseFloat(serviceFee.percentage.value) / 100;
+        return tips.map(c => {
+            const coinAmount = parseFloat(c.amount);
+            return {...c, amount: Math.round(coinAmount * percentage).toString()}
+        })
+    } else {
+        return []
+    }
 }
 
 async function main() {
@@ -52,10 +68,10 @@ async function main() {
         .description("initialize a new instance of a tips contract")
         .requiredOption("--code-id <code-id>", "id of the contract to initialize", parseInt)
         .requiredOption("--subspace <subspace>", "application which is deploying the contract", parseInt)
-        .requiredOption("--saved-tips-threshold <saved-tips-threshold>", "the number of records saved of a user tips history", parseInt)
+        .requiredOption("--saved-tips-size <saved-tips-size>", "the number of records saved of a user tips history", parseInt)
         .requiredOption("--name <name>", "contract name")
         .option("--fixed-fee <coins>", "fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
-        .option("--percentage-fee <value-decimals>", "percentage fee applied to the tip. ex 1", parsePercentageFee)
+        .option("--percentage-fee <value-decimals>", "percentage fee applied to the tip. ex 1", parseFloat)
         .option("--admin <admin>", "bech32 address of who will have the admin rights", account!.address)
         .action(async (options) => {
             let fee = null;
@@ -68,13 +84,15 @@ async function main() {
                 } as ServiceFee
             } else if (options.percentageFee !== undefined) {
                 fee = {
-                    percentage: options.percentageFee
+                    percentage: {
+                        value: options.percentageFee.toString()
+                    }
                 } as ServiceFee
             }
 
             let instantiateMsg: InstantiateMsg = {
                 admin: options.admin,
-                saved_tips_threshold: options.savedTipsThreshold,
+                saved_tips_record_size: options.savedTipsSize,
                 service_fee: fee,
                 subspace_id: options.subspace.toString()
             };
@@ -89,15 +107,26 @@ async function main() {
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (receiver, options) => {
             console.log(`Sending tip to ${receiver}`)
+            const config = await client.queryContractSmart(options.contract, {
+                config: {}
+            } as QueryMsg);
+
+            const fees = computeFees(options.coins, config.service_fee);
+            const founds = mergeCoins([...options.coins, ...fees]);
+            console.log("Tip fees", fees);
+            console.log("Tip amount", options.coins);
+            console.log("Sent amount", founds);
+
             const response = await client.execute(account.address, options.contract, {
                 send_tip: {
+                    amount: options.coins,
                     target: {
                         user_target: {
                             receiver: receiver,
                         }
                     }
                 }
-            } as ExecuteMsg, "auto", undefined, options.coins);
+            } as ExecuteMsg, "auto", undefined, founds);
             console.log(response);
         })
 
@@ -107,16 +136,26 @@ async function main() {
         .requiredOption("--coins <coins>", "amount of coins to tip to the user. Comma separated list of coins ex: 100udsm,100uatom", parseCoinList)
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (postId, options) => {
-            console.log(`Sending tip to the author of ${postId}`);
+            const config = await client.queryContractSmart(options.contract, {
+                config: {}
+            } as QueryMsg);
+
+            const fees = computeFees(options.coins, config.service_fee);
+            const founds = mergeCoins([...options.coins, ...fees]);
+            console.log("Tip fees", fees);
+            console.log("Tip amount", options.coins);
+            console.log("Sent amount", founds);
+
             const response = await client.execute(account.address, options.contract, {
-                update_service_fee: {
+                send_tip: {
+                    amount: options.coins,
                     target: {
                         content_target: {
                             post_id: postId.toString(),
                         }
                     }
                 }
-            } as ExecuteMsg, "auto", undefined, options.coins);
+            } as ExecuteMsg, "auto", undefined, founds);
             console.log(response);
         })
 
@@ -124,7 +163,7 @@ async function main() {
         .description("updates the fee to be payed to send a tip")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .option("--fixed <coins>", "fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
-        .option("--percentage <value-decimals>", "percentage fee applied to the tip. ex 1", parsePercentageFee)
+        .option("--percentage <value-decimals>", "percentage fee applied to the tip. ex 1", parseFloat)
         .action(async (options) => {
             let new_fee = null;
 
@@ -136,9 +175,11 @@ async function main() {
                     }
                 } as ServiceFee
             } else if (options.percentage !== undefined) {
-                console.log("Updating fee to percentage, new value:", options.percentage);
+                console.log("Updating fee to percentage, new value:", options.percentage.toString());
                 new_fee = {
-                    percentage: options.percentage
+                    percentage: {
+                        value: options.percentage.toString()
+                    }
                 } as ServiceFee
             } else {
                 console.log("Removing service fee");
@@ -167,16 +208,16 @@ async function main() {
             console.log(response);
         });
 
-    program.command("update-tips-record-threshold")
+    program.command("update-tips-record-size")
         .description("updates the amount of tips records stored from the contract")
-        .argument("<new-threshold>", "new tips record threshold", parseInt)
+        .argument("<new-size>", "new tips record size", parseInt)
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
-        .action(async (new_threshold, options) => {
-            console.log(`Setting new tips record threshold ${new_threshold}`);
+        .action(async (new_size, options) => {
+            console.log(`Setting new tips record size ${new_size}`);
 
             const response = await client.execute(account.address, options.contract, {
-                update_saved_tips_record_threshold: {
-                    new_threshold
+                update_saved_tips_record_size: {
+                    new_size
                 }
             } as ExecuteMsg, "auto");
             console.log(response);
@@ -209,11 +250,11 @@ async function main() {
 
             console.log("Admin", response.admin);
             console.log("Subspace", response.subspace_id);
-            console.log("saved_tips_record_threshold:", response.saved_tips_record_threshold);
+            console.log("saved_tips_record_size:", response.saved_tips_record_size);
             console.log("fees", JSON.stringify(response.service_fee));
         })
 
-    queryCommand.command("user-sent-tips")
+    queryCommand.command("sent-tips")
         .description("queries the tips sent from an user")
         .argument("<sender>", "sender's bech32 encoded address")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
@@ -227,7 +268,7 @@ async function main() {
             logTips(response.tips);
         })
 
-    queryCommand.command("user-received-tips")
+    queryCommand.command("received-tips")
         .description("queries the tips received from an user")
         .argument("<receiver>", "receiver's bech32 encoded address")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
