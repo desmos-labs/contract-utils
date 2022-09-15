@@ -68,7 +68,7 @@ async function main() {
         .description("initialize a new instance of a tips contract")
         .requiredOption("--code-id <code-id>", "id of the contract to initialize", parseInt)
         .requiredOption("--subspace <subspace>", "application which is deploying the contract", parseInt)
-        .requiredOption("--saved-tips-size <saved-tips-size>", "the number of records saved of a user tips history", parseInt)
+        .requiredOption("--tips-history-size <tips-history-size>", "the number of records saved of a user tips history", parseInt)
         .requiredOption("--name <name>", "contract name")
         .option("--fixed-fee <coins>", "fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
         .option("--percentage-fee <value-decimals>", "percentage fee applied to the tip. ex 1", parseFloat)
@@ -92,7 +92,7 @@ async function main() {
 
             let instantiateMsg: InstantiateMsg = {
                 admin: options.admin,
-                saved_tips_record_size: options.savedTipsSize,
+                tips_history_size: options.tipsHistorySize,
                 service_fee: fee,
                 subspace_id: options.subspace.toString()
             };
@@ -216,7 +216,7 @@ async function main() {
             console.log(`Setting new tips record size ${new_size}`);
 
             const response = await client.execute(account.address, options.contract, {
-                update_saved_tips_record_size: {
+                update_saved_tips_history_size: {
                     new_size
                 }
             } as ExecuteMsg, "auto");
@@ -250,7 +250,7 @@ async function main() {
 
             console.log("Admin", response.admin);
             console.log("Subspace", response.subspace_id);
-            console.log("saved_tips_record_size:", response.saved_tips_record_size);
+            console.log("saved_tips_record_size:", response.tips_history_size);
             console.log("fees", JSON.stringify(response.service_fee));
         })
 
