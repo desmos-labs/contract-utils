@@ -6,10 +6,6 @@ export interface QueryConfigResponse {
  */
 admin: Addr
 /**
- * The number of records saved of a user tips history.
- */
-saved_tips_record_size: number
-/**
  * Fee required to execute [`ExecuteMsg::SendTip`].
  */
 service_fee?: (ServiceFee | null)
@@ -17,5 +13,9 @@ service_fee?: (ServiceFee | null)
  * Application that distributed the contract.
  */
 subspace_id: Uint64
+/**
+ * The number of records saved of a user tips history.
+ */
+tips_history_size: number
 [k: string]: unknown
 }

@@ -29,9 +29,9 @@ new_admin: string
 [k: string]: unknown
 }
 } | {
-update_saved_tips_record_size: {
+update_saved_tips_history_size: {
 /**
- * New tip records size.
+ * New tips history size.
  */
 new_size: number
 [k: string]: unknown
