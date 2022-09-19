@@ -16,7 +16,9 @@ function logTips(tips: Tip[]) {
         console.log("Tip", i);
         console.log("Sender", tip.sender);
         console.log("Receiver", tip.receiver);
+        console.log("Post id", tip.post_id);
         console.log("Amount", tip.amount);
+        console.log("Block height", tip.block_height);
         if (i != array.length - 1) {
             console.log("")
         }
