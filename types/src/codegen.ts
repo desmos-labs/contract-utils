@@ -70,6 +70,12 @@ const DEFAULT_CONFIG = {
             outputName: "contracts",
             outputDir: CONTRACTS_OUTPUT_DIR,
         },
+        {
+            name: "contracts",
+            paths: [process.env.CONTRACTS_ROOT || path.join(__dirname, "../cw721-schemas")],
+            outputName: "contracts",
+            outputDir: CONTRACTS_OUTPUT_DIR,
+        },
     ],
     tsconfig: TSCONFIG_DEFAULT,
 };

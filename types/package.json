@@ -6,6 +6,7 @@
   "repository": "https://github.com/desmos-labs/contracts-utils",
   "license": "Apache-2.0",
   "scripts": {
+    "pull-cw721-schemas": "ts-node src/pull-cw721-schemas.ts",
     "pull-schemas": "ts-node src/pull-schemas.ts",
     "build": "tsc",
     "codegen": "ts-node src/codegen.ts"

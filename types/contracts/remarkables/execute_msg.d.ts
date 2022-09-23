@@ -8,7 +8,7 @@ remarkables_uri: string
 [k: string]: unknown
 }
 } | {
-update_rarity_mint_fee: {
+update_rarity_mint_fees: {
 new_fees: Coin[]
 rarity_level: number
 [k: string]: unknown
