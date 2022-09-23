@@ -73,7 +73,7 @@ async function main() {
     program.command("init")
         .description("initialize a new instance of a tips contract")
         .requiredOption("--code-id <code-id>", "id of the contract to initialize", parseInt)
-        .requiredOption("--subspace <subspace>", "application which is deploying the contract", parseInt)
+        .requiredOption("--subspace-id <subspace-id>", "id of subspace which is deploying the contract", parseInt)
         .requiredOption("--tips-history-size <tips-history-size>", "the number of records saved of a user tips history", parseInt)
         .requiredOption("--name <name>", "contract name")
         .option("--fixed-fee <coins>", "fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
@@ -100,7 +100,7 @@ async function main() {
                 admin: options.admin,
                 tips_history_size: options.tipsHistorySize,
                 service_fee: fee,
-                subspace_id: options.subspace.toString()
+                subspace_id: options.subspace_id.toString()
             };
             const initResult = await client.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
             console.log("Contract initialized", initResult);
