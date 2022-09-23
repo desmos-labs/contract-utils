@@ -114,10 +114,10 @@ async function main() {
             } as QueryMsg);
 
             const fees = computeFees(options.coins, config.service_fee);
-            const founds = mergeCoins([...options.coins, ...fees]);
+            const funds = mergeCoins([...options.coins, ...fees]);
             console.log("Tip fees", fees);
             console.log("Tip amount", options.coins);
-            console.log("Sent amount", founds);
+            console.log("Sent amount", funds);
 
             const response = await client.execute(account.address, options.contract, {
                 send_tip: {
@@ -128,7 +128,7 @@ async function main() {
                         }
                     }
                 }
-            } as ExecuteMsg, "auto", undefined, founds);
+            } as ExecuteMsg, "auto", undefined, funds);
             console.log(response);
         })
 
@@ -143,10 +143,10 @@ async function main() {
             } as QueryMsg);
 
             const fees = computeFees(options.coins, config.service_fee);
-            const founds = mergeCoins([...options.coins, ...fees]);
+            const funds = mergeCoins([...options.coins, ...fees]);
             console.log("Tip fees", fees);
             console.log("Tip amount", options.coins);
-            console.log("Sent amount", founds);
+            console.log("Sent amount", funds);
 
             const response = await client.execute(account.address, options.contract, {
                 send_tip: {
@@ -157,7 +157,7 @@ async function main() {
                         }
                     }
                 }
-            } as ExecuteMsg, "auto", undefined, founds);
+            } as ExecuteMsg, "auto", undefined, funds);
             console.log(response);
         })
 
