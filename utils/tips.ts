@@ -12,17 +12,21 @@ import {
 import {parseCoinList} from "./cli-parsing-utils";
 
 function logTips(tips: Tip[]) {
-    tips.forEach((tip, i, array) => {
-        console.log("Tip", i);
-        console.log("Sender", tip.sender);
-        console.log("Receiver", tip.receiver);
-        console.log("Post id", tip.post_id);
-        console.log("Amount", tip.amount);
-        console.log("Block height", tip.block_height);
-        if (i != array.length - 1) {
-            console.log("")
-        }
-    })
+    if (tips.length === 0) {
+        console.log("Empty result")
+    } else {
+        tips.forEach((tip, i, array) => {
+            console.log("Tip", i);
+            console.log("Sender", tip.sender);
+            console.log("Receiver", tip.receiver);
+            console.log("Post id", tip.post_id);
+            console.log("Amount", tip.amount);
+            console.log("Block height", tip.block_height);
+            if (i != array.length - 1) {
+                console.log("")
+            }
+        })
+    }
 }
 
 function mergeCoins(tipAmount: Coin[]): Coin[] {
