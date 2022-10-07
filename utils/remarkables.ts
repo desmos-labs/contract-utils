@@ -1,9 +1,44 @@
 import { DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/desmjs";
 import { program, Command } from "commander";
 import * as Config from "./config"
-import { ExecuteMsg, InstantiateMsg, QueryMsg } from "@desmoslabs/contract-types/contracts/remarkables";
+import { ExecuteMsg, InstantiateMsg, QueryMsg, Rarity } from "@desmoslabs/contract-types/contracts/remarkables";
 import { AccountData } from "@cosmjs/amino";
 import { parseBool, parseCoinList } from "./cli-parsing-utils";
+
+/**
+ * Parse a comma separated list of mint fees.
+ * @param raw - The string to be parsed as list of mint fees.
+ */
+function parseMintFeesList(raw: string): { denom: string, amount: string }[][] {
+    return raw.split(",").map(parseCoinList);
+}
+
+/**
+ * Parse a comma separated list of engagement thresholds.
+ * @param raw - The string to be parsed as list of engagement threshold.
+ */
+function parseEngagementThresholds(raw: string): number[] {
+    return raw.split(",").map(parseInt);
+}
+
+/**
+ * Build rarities from engagement thresholds and mint fees list.
+ * @param engagementThresholds - The engagement thresholds shown as array of number.
+ * @param mintFeesList - The mint fees list shown as array of coin list.
+ */
+function buildRarities(engagementThresholds: number[], mintFeesList: { denom: string, amount: string }[][]) : Rarity[]{
+    if (engagementThresholds.length != mintFeesList.length) {
+        throw new Error("egagement thresholds size not equal to mint fees list size");
+    }
+    const rarities: Rarity[] = [];
+    for(let i = 0; i <  engagementThresholds.length; i++) {
+        rarities.push({engagement_threshold: engagementThresholds[i], mint_fees: mintFeesList[i]});
+    }
+    if (rarities.length == 0) {
+        throw new Error("empty rarities")
+    }
+    return rarities;
+}
 
 async function main() {
     const signer = await OfflineSignerAdapter.fromMnemonic(SigningMode.DIRECT, Config.mnemonic);
@@ -20,7 +55,8 @@ async function main() {
         .requiredOption("--name <name>", "Remarkables name")
         .requiredOption("--symbol <symbol>", "Remarkables symbol")
         .requiredOption("--subspace-id <subspace-id>", "Id of the subspace where remarkables contract operates", parseInt)
-        .requiredOption("--rarities <rarities>", "Rarities list to be initialized")
+        .requiredOption("--engagement-thresholds <engagement-thresholds>", "Engagement thresholds of rarities to be initialized. ex: 50,100", parseEngagementThresholds)
+        .requiredOption("--mint-fees-list <mint-fees-list>", "Mint fees list of rarities to be initialized. ex: [[1000stkae,1000udsm],[1000udsm]]", parseMintFeesList)
         .option("--admin <admin>", "Bech32 address of who will have the contract admin rights", account!.address)
         .action(async (options) => {
             console.log(`Initializing contract with code ${options.codeId}`);
@@ -33,13 +69,14 @@ async function main() {
                     symbol: options.symbol
                 },
                 subspace_id: options.subspace_id.toString(),
-                rarities: [],
+                rarities: buildRarities(options.engagementThresholds, options.mintFeesList),
             };
             const initResult = await client.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
             console.log("Contract initialized", initResult);
         });
     buildExecuteCommands(program, client, account);
     buildQueryCommands(program, client);
+    program.parse();
 }
 function buildExecuteCommands(program: Command, client: DesmosClient, account: AccountData) {
     program
@@ -131,4 +168,5 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log("tokens", tokens);
         });
 }
+
 main();
