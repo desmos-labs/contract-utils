@@ -12,17 +12,21 @@ import {
 import {parseCoinList} from "./cli-parsing-utils";
 
 function logTips(tips: Tip[]) {
-    tips.forEach((tip, i, array) => {
-        console.log("Tip", i);
-        console.log("Sender", tip.sender);
-        console.log("Receiver", tip.receiver);
-        console.log("Post id", tip.post_id);
-        console.log("Amount", tip.amount);
-        console.log("Block height", tip.block_height);
-        if (i != array.length - 1) {
-            console.log("")
-        }
-    })
+    if (tips.length === 0) {
+        console.log("Empty result")
+    } else {
+        tips.forEach((tip, i, array) => {
+            console.log("Tip", i);
+            console.log("Sender", tip.sender);
+            console.log("Receiver", tip.receiver);
+            console.log("Post id", tip.post_id);
+            console.log("Amount", tip.amount);
+            console.log("Block height", tip.block_height);
+            if (i != array.length - 1) {
+                console.log("")
+            }
+        })
+    }
 }
 
 function mergeCoins(tipAmount: Coin[]): Coin[] {
@@ -69,7 +73,7 @@ async function main() {
     program.command("init")
         .description("initialize a new instance of a tips contract")
         .requiredOption("--code-id <code-id>", "id of the contract to initialize", parseInt)
-        .requiredOption("--subspace <subspace>", "application which is deploying the contract", parseInt)
+        .requiredOption("--subspace-id <subspace-id>", "id of subspace which is deploying the contract", parseInt)
         .requiredOption("--tips-history-size <tips-history-size>", "the number of records saved of a user tips history", parseInt)
         .requiredOption("--name <name>", "contract name")
         .option("--fixed-fee <coins>", "fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
@@ -96,7 +100,7 @@ async function main() {
                 admin: options.admin,
                 tips_history_size: options.tipsHistorySize,
                 service_fee: fee,
-                subspace_id: options.subspace.toString()
+                subspace_id: options.subspace_id.toString()
             };
             const initResult = await client.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
             console.log("Contract initialized", initResult);
@@ -114,10 +118,10 @@ async function main() {
             } as QueryMsg);
 
             const fees = computeFees(options.coins, config.service_fee);
-            const founds = mergeCoins([...options.coins, ...fees]);
+            const funds = mergeCoins([...options.coins, ...fees]);
             console.log("Tip fees", fees);
             console.log("Tip amount", options.coins);
-            console.log("Sent amount", founds);
+            console.log("Sent amount", funds);
 
             const response = await client.execute(account.address, options.contract, {
                 send_tip: {
@@ -128,7 +132,7 @@ async function main() {
                         }
                     }
                 }
-            } as ExecuteMsg, "auto", undefined, founds);
+            } as ExecuteMsg, "auto", undefined, funds);
             console.log(response);
         })
 
@@ -143,10 +147,10 @@ async function main() {
             } as QueryMsg);
 
             const fees = computeFees(options.coins, config.service_fee);
-            const founds = mergeCoins([...options.coins, ...fees]);
+            const funds = mergeCoins([...options.coins, ...fees]);
             console.log("Tip fees", fees);
             console.log("Tip amount", options.coins);
-            console.log("Sent amount", founds);
+            console.log("Sent amount", funds);
 
             const response = await client.execute(account.address, options.contract, {
                 send_tip: {
@@ -157,7 +161,7 @@ async function main() {
                         }
                     }
                 }
-            } as ExecuteMsg, "auto", undefined, founds);
+            } as ExecuteMsg, "auto", undefined, funds);
             console.log(response);
         })
 
