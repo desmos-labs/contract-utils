@@ -207,7 +207,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
         .requiredOption("--owner <owner>", "Address of the owner")
         .option("--include-expired <include-expired>", "Unset or false will filter out expired approvals", parseBool, false)
         .option("--start-after <start-after>", "Position in address where operators start after")
-        .option("--limit <limit>", "Limitation to list the number of operators", parseInt, 0)
+        .option("--limit <limit>", "Limitation to list the number of operators", parseInt)
         .action(async (options) => {
             console.log(`Querying operators of the owner ${options.owner}`);
             const operators = await client.queryContractSmart(options.contract, {
