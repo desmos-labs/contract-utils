@@ -27,6 +27,7 @@ async function main() {
                     const [, , contract, dir, file] = f.entryName.split("/");
                     // Processing a file inside the schema dir of the cw721 package
                     if (dir === "schema" && contract === "cw721-base") {
+                        console.log(`Downloading ${f.entryName}`);
                         // Create the contract schema dir if not exist.
                         if (!fs.existsSync(`${schemaPath}/${contract}`)) {
                             fs.mkdirSync(`${schemaPath}/${contract}`);
