@@ -7,7 +7,8 @@
   "license": "Apache-2.0",
   "scripts": {
     "pull-cw721-schemas": "ts-node src/pull-cw721-schemas.ts",
-    "pull-schemas": "ts-node src/pull-schemas.ts",
+    "pull-contract-schemas": "ts-node src/pull-contract-schemas",
+    "pull-schemas": "ts-node src/pull-contract-schemas.ts && ts-node src/pull-cw721-schemas.ts",
     "build": "tsc",
     "codegen": "ts-node src/codegen.ts"
   },

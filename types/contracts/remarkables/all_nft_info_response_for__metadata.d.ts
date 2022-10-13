@@ -9,7 +9,7 @@ at_height: number
 at_time: Timestamp
 } | {
 never: {
-[k: string]: unknown
+
 }
 })
 /**
@@ -34,7 +34,6 @@ access: OwnerOfResponse
  * Data on the token itself,
  */
 info: NftInfoResponseFor_Metadata
-[k: string]: unknown
 }
 export interface OwnerOfResponse {
 /**
@@ -45,7 +44,6 @@ approvals: Approval[]
  * Owner of the token
  */
 owner: string
-[k: string]: unknown
 }
 export interface Approval {
 /**
@@ -56,7 +54,6 @@ expires: Expiration
  * Account that can transfer/send the token
  */
 spender: string
-[k: string]: unknown
 }
 export interface NftInfoResponseFor_Metadata {
 /**
@@ -67,7 +64,6 @@ extension: Metadata
  * Universal resource identifier for this NFT Should point to a JSON file that conforms to the ERC721 Metadata JSON Schema
  */
 token_uri?: (string | null)
-[k: string]: unknown
 }
 export interface Metadata {
 post_id: number

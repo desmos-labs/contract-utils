@@ -18,4 +18,9 @@ update_admin: {
 new_admin: string
 [k: string]: unknown
 }
+} | {
+claim_fees: {
+receiver: string
+[k: string]: unknown
+}
 })

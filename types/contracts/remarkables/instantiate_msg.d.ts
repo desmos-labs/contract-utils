@@ -36,5 +36,4 @@ name: string
  * Symbol of the NFT contract
  */
 symbol: string
-[k: string]: unknown
 }
