@@ -103,6 +103,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cosmjs/crypto@npm:^0.29.2":
+  version: 0.29.2
+  resolution: "@cosmjs/crypto@npm:0.29.2"
+  dependencies:
+    "@cosmjs/encoding": ^0.29.2
+    "@cosmjs/math": ^0.29.2
+    "@cosmjs/utils": ^0.29.2
+    "@noble/hashes": ^1
+    bn.js: ^5.2.0
+    elliptic: ^6.5.3
+    libsodium-wrappers: ^0.7.6
+  checksum: 40155564f0decf2b32f0e6325bb07eea588f7aa3acd4b09929a5fad279ae4c1648a82057b09f55d8538e7aa9af6df6e3ac4eecdf22033bc3ac6533d1584869f3
+  languageName: node
+  linkType: hard
+
 "@cosmjs/encoding@npm:0.28.13, @cosmjs/encoding@npm:^0.28.11":
   version: 0.28.13
   resolution: "@cosmjs/encoding@npm:0.28.13"
@@ -122,6 +137,17 @@ __metadata:
     bech32: ^1.1.4
     readonly-date: ^1.0.0
   checksum: ca8f1fba50a5e093d987435b20d8c6cd1b3ab7b1be607079fb6ddff09efc6e5f265ba10a65c8398d4a44e99f1f0cbad6f662a56bb934796dccecb831457eaff0
+  languageName: node
+  linkType: hard
+
+"@cosmjs/encoding@npm:^0.29.2":
+  version: 0.29.2
+  resolution: "@cosmjs/encoding@npm:0.29.2"
+  dependencies:
+    base64-js: ^1.3.0
+    bech32: ^1.1.4
+    readonly-date: ^1.0.0
+  checksum: a344f3a143bc661a8d5007da74ad9bbf895e8b5cccf65113fb0936c7a8dad70ff66f531243b88c8a95455b44f9667bb3110d29a7f01bdd04780961eeff6e760f
   languageName: node
   linkType: hard
 
@@ -150,6 +176,15 @@ __metadata:
   dependencies:
     bn.js: ^4.11.8
   checksum: 4e7247f499055ddf461dc3b982fd6c1bc4be4474bc97dcfd53b485af12e6083cebf28ea6adaa99408131e7eb8122449432a7a1aa11274fcb72861208181d81a5
+  languageName: node
+  linkType: hard
+
+"@cosmjs/math@npm:^0.29.2":
+  version: 0.29.2
+  resolution: "@cosmjs/math@npm:0.29.2"
+  dependencies:
+    bn.js: ^5.2.0
+  checksum: 447f6152bd9f1162eee1cb2cbc070d12dd08199de3d7828a74a8d3e01dbe8e8096d2f71854df254fd666abb3712d99a690c1ca362559395b098f115115451b40
   languageName: node
   linkType: hard
 
@@ -249,6 +284,13 @@ __metadata:
   version: 0.25.6
   resolution: "@cosmjs/utils@npm:0.25.6"
   checksum: 4d3504d5e556146568583e454893b6aaf416be20708edb443361c089168b18d57f98d554c6c3c4d2cefa19e642a7e7a6bb190bbb2c2863ea681187fb54e520ab
+  languageName: node
+  linkType: hard
+
+"@cosmjs/utils@npm:^0.29.2":
+  version: 0.29.2
+  resolution: "@cosmjs/utils@npm:0.29.2"
+  checksum: d572eff10714c0ee33b823b362defb35de3fc5297a3e1d4bd64b4295cb538e445d15de328b494accca96d0779578d6845618c73efdf880cc093df037a831bf42
   languageName: node
   linkType: hard
 
@@ -1113,7 +1155,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "contracts-utils@workspace:utils"
   dependencies:
-    "@cosmjs/crypto": ^0.28.11
+    "@cosmjs/crypto": ^0.29.2
     "@desmoslabs/contract-types": ^1.0.0
     "@desmoslabs/desmjs": ^4.3.2
     "@desmoslabs/desmjs-types": ^4.3.1
