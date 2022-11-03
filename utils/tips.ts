@@ -229,12 +229,12 @@ async function main() {
             console.log(response);
         });
 
-    program.command("claim-fee")
-        .description("claim the fee collected from the contract")
+    program.command("claim-fees")
+        .description("claim the fees collected from the contract")
         .argument("<receiver>", "bech32 address to which they will be sent")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (receiver, options) => {
-            console.log(`Claiming contract fee and send to ${receiver}`);
+            console.log(`Claiming contract fees and send to ${receiver}`);
 
             const response = await client.execute(account.address, options.contract, {
                 claim_fees: {
