@@ -110,9 +110,9 @@ export interface TipsInterface extends TipsReadOnlyInterface {
   }, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]) => Promise<ExecuteResult>;
 }
 export class TipsClient extends TipsQueryClient implements TipsInterface {
-  client: SigningCosmWasmClient;
+  override client: SigningCosmWasmClient;
   sender: string;
-  contractAddress: string;
+  override contractAddress: string;
 
   constructor(client: SigningCosmWasmClient, sender: string, contractAddress: string) {
     super(client, contractAddress);

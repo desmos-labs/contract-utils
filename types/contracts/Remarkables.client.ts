@@ -114,9 +114,9 @@ export interface RemarkablesInterface extends RemarkablesReadOnlyInterface {
   }, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]) => Promise<ExecuteResult>;
 }
 export class RemarkablesClient extends RemarkablesQueryClient implements RemarkablesInterface {
-  client: SigningCosmWasmClient;
+  override client: SigningCosmWasmClient;
   sender: string;
-  contractAddress: string;
+  override contractAddress: string;
 
   constructor(client: SigningCosmWasmClient, sender: string, contractAddress: string) {
     super(client, contractAddress);

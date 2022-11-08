@@ -43,9 +43,9 @@ export interface PoapManagerInterface extends PoapManagerReadOnlyInterface {
   }, fee?: number | StdFee | "auto", memo?: string, funds?: Coin[]) => Promise<ExecuteResult>;
 }
 export class PoapManagerClient extends PoapManagerQueryClient implements PoapManagerInterface {
-  client: SigningCosmWasmClient;
+  override client: SigningCosmWasmClient;
   sender: string;
-  contractAddress: string;
+  override contractAddress: string;
 
   constructor(client: SigningCosmWasmClient, sender: string, contractAddress: string) {
     super(client, contractAddress);
