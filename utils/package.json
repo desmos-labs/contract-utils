@@ -17,7 +17,8 @@
     "cw721-remarkables": "ts-node cw721-remarkables.ts"
   },
   "dependencies": {
-    "@cosmjs/crypto": "^0.29.2",
+    "@cosmjs/cosmwasm-stargate": "^0.29.3",
+    "@cosmjs/crypto": "^0.29.3",
     "@desmoslabs/contract-types": "^1.0.0",
     "@desmoslabs/desmjs": "^4.3.2",
     "@desmoslabs/desmjs-types": "^4.3.1",

@@ -1,7 +1,8 @@
 import { DesmosClient } from "@desmoslabs/desmjs";
 import { Command } from "commander";
 import { AccountData } from "@cosmjs/amino";
-import { InstantiateMsg, QueryMsgFor_Empty, ExecuteMsg, Expiration } from "@desmoslabs/contract-types/contracts/cw721-base";
+import { Cw721BaseClient } from "@desmoslabs/contract-types/contracts/Cw721Base.client";
+import { InstantiateMsg, Expiration, QueryMsgForEmpty } from "@desmoslabs/contract-types/contracts/Cw721Base.types";
 import { parseBool, parseCWTimestamp } from "./cli-parsing-utils";
 
 export function createCw721Program(program: Command, client: DesmosClient, account: AccountData) {
@@ -25,10 +26,10 @@ export function createCw721Program(program: Command, client: DesmosClient, accou
     buildExecuteCommands(program, client, account);
     const queryCommand = program.command("query")
         .description("Subcommand to query the contract");
-    buildQueryCommands(queryCommand, client);
+    buildQueryCommands(queryCommand, client, account);
 }
 
-function buildExecuteCommands(program: Command, client: DesmosClient, account: AccountData) {
+function buildExecuteCommands(program: Command, desmosClient: DesmosClient, account: AccountData) {
     program
         .command("transfer")
         .description("Move a token to another account without triggering actions")
@@ -36,12 +37,11 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .requiredOption("--recipient <recipient>", "Address who recieved the token")
         .requiredOption("--token-id <token-id>", "Id of the token")
         .action(async (options) => {
-            const response = await client.execute(account.address, options.contract, {
-                transfer_nft: {
-                    recipient: options.recipient,
-                    token_id: options.tokenId,
-                },
-            } as ExecuteMsg, "auto");
+            const client = new Cw721BaseClient(desmosClient, account.address, options.contract);
+            const response = await client.transferNft({
+                recipient: options.recipient,
+                tokenId: options.tokenId,
+            });
             console.log(response);
         });
 
@@ -53,13 +53,12 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .requiredOption("--token-id <token-id>", "Id of the token")
         .option("--msg <msg>", "Base64 encoded action message of the recipient contract would be executed")
         .action(async (options) => {
-            const response = await client.execute(account.address, options.contract, {
-                send_nft: {
-                    contract: options.recipient,
-                    token_id: options.tokenId,
-                    msg: options.msg,
-                },
-            } as ExecuteMsg, "auto");
+            const client = new Cw721BaseClient(desmosClient, account.address, options.contract);
+            const response = await client.sendNft({
+                contract: options.recipient,
+                tokenId: options.tokenId,
+                msg: options.msg,
+            });
             console.log(response);
         });
 
@@ -78,13 +77,12 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
             } else if (options.expirationHeight !== undefined) {
                 expiration = { at_height: options.expirationHeight }
             }
-            const response = await client.execute(account.address, options.contract, {
-                approve: {
-                    spender: options.spender,
-                    token_id: options.tokenId,
-                    expires: expiration,
-                }
-            } as ExecuteMsg, "auto");
+            const client = new Cw721BaseClient(desmosClient, account.address, options.contract);
+            const response = await client.approve({
+                spender: options.spender,
+                tokenId: options.tokenId,
+                expires: expiration,
+            });
             console.log(response);
         });
 
@@ -95,12 +93,11 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .requiredOption("--spender <spender>", "Address who will be canceled the access of the token")
         .requiredOption("--token-id <token-id>", "Id of the token")
         .action(async (options) => {
-            const response = await client.execute(account.address, options.contract, {
-                revoke: {
-                    spender: options.spender,
-                    token_id: options.tokenId,
-                }
-            } as ExecuteMsg, "auto");
+            const client = new Cw721BaseClient(desmosClient, account.address, options.contract);
+            const response = await client.revoke({
+                spender: options.spender,
+                tokenId: options.tokenId,
+            });
             console.log(response);
         });
 
@@ -118,10 +115,11 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
             } else if (options.expirationHeight !== undefined) {
                 expiration = { at_height: options.expirationHeight }
             }
-            const response = await client.execute(account.address, options.contract, {
-                approve_all: options.operator,
-                expires: expiration,
-            } as ExecuteMsg, "auto");
+            const client = new Cw721BaseClient(desmosClient, account.address, options.contract);
+            const response = await client.approveAll({
+                operator: options.operator,
+                expires: expiration
+            });
             console.log(response);
         });
 
@@ -131,11 +129,8 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .requiredOption("--operator <operator>", "Address who will be canceled the access of all tokens")
         .action(async (options) => {
-            const response = await client.execute(account.address, options.contract, {
-                revoke_all: {
-                    operator: options.operator,
-                },
-            } as ExecuteMsg, "auto");
+            const client = new Cw721BaseClient(desmosClient, account.address, options.contract);
+            const response = await client.revokeAll({ operator: options.operator });
             console.log(response);
         });
 
@@ -146,17 +141,14 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .requiredOption("--token-id <token-id>", "Id of the token")
         .action(async (options) => {
-            const response = await client.execute(account.address, options.contract, {
-                burn: {
-                    token_id: options.tokenId,
-                }
-            } as ExecuteMsg, "auto");
+            const client = new Cw721BaseClient(desmosClient, account.address, options.contract);
+            const response = await client.burn({ tokenId: options.tokenId });
             console.log(response);
         });
 
 }
 
-function buildQueryCommands(program: Command, client: DesmosClient) {
+function buildQueryCommands(program: Command, client: DesmosClient, account: AccountData) {
     program
         .command("owner-of")
         .description("Queries the owner of the given token, error if token does not exist")
@@ -167,7 +159,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log(`Querying owner of token id ${options.tokenId}`);
             const owner = await client.queryContractSmart(options.contract, {
                 owner_of: { token_id: options.tokenId, include_expired: options.includeExpired },
-            } as QueryMsgFor_Empty);
+            } as QueryMsgForEmpty);
             console.log("owner info", owner)
         });
 
@@ -182,7 +174,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log(`Querying approval of token id ${options.tokenId} approved to the spender ${options.spender}`);
             const approval = await client.queryContractSmart(options.contract, {
                 approval: { token_id: options.tokenId, spender: options.spender, include_expired: options.includeExpired },
-            } as QueryMsgFor_Empty);
+            } as QueryMsgForEmpty);
             console.log("approval", approval);
         });
 
@@ -196,7 +188,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log(`Querying all approvals info of token id ${options.tokenId}`);
             const approvals = await client.queryContractSmart(options.contract, {
                 approvals: { token_id: options.tokenId, include_expired: options.includeExpired },
-            } as QueryMsgFor_Empty);
+            } as QueryMsgForEmpty);
             console.log("approvals", approvals);
         });
 
@@ -217,7 +209,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
                     start_after: options.startAfter,
                     limit: options.limit,
                 },
-            } as QueryMsgFor_Empty);
+            } as QueryMsgForEmpty);
             console.log("operators", operators)
         });
 
@@ -229,7 +221,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log(`Querying operators of the number of tokens`);
             const num = await client.queryContractSmart(options.contract, {
                 num_tokens: {},
-            } as QueryMsgFor_Empty);
+            } as QueryMsgForEmpty);
             console.log("num", num);
         });
 
@@ -241,7 +233,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log(`Querying contract info of ${options.contract}`)
             const config = await client.queryContractSmart(options.contract, {
                 contract_info: {},
-            } as QueryMsgFor_Empty);
+            } as QueryMsgForEmpty);
             console.log("Contract info", config);
         });
 
@@ -254,7 +246,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log(`Querying nft info of token id ${options.tokenId}`);
             const info = await client.queryContractSmart(options.contract, {
                 nft_info: { token_id: options.tokenId },
-            } as QueryMsgFor_Empty);
+            } as QueryMsgForEmpty);
             console.log("NFT info", info)
         });
 
@@ -268,7 +260,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log(`Querying all nft info of token id ${options.tokenId}`);
             const info = await client.queryContractSmart(options.contract, {
                 all_nft_info: { token_id: options.tokenId, include_expired: options.includeExpired },
-            } as QueryMsgFor_Empty);
+            } as QueryMsgForEmpty);
             console.log("All NFT info", info)
         });
 
@@ -283,7 +275,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log(`Queries all tokens owned by ${options.owner}`);
             const tokens = await client.queryContractSmart(options.contract, {
                 tokens: { owner: options.owner, start_after: options.startAfter, limit: options.limit },
-            } as QueryMsgFor_Empty);
+            } as QueryMsgForEmpty);
             console.log("tokens", tokens);
         });
 
@@ -297,7 +289,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log(`Queries all tokens`);
             const tokens = await client.queryContractSmart(options.contract, {
                 all_tokens: { start_after: options.startAfter, limit: options.limit },
-            } as QueryMsgFor_Empty);
+            } as QueryMsgForEmpty);
             console.log("tokens", tokens);
         });
 
@@ -309,7 +301,7 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
             console.log(`Queries the minter`);
             const minter = await client.queryContractSmart(options.contract, {
                 minter: {},
-            } as QueryMsgFor_Empty);
+            } as QueryMsgForEmpty);
             console.log("minter", minter);
         });
 
