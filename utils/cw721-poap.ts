@@ -2,7 +2,7 @@ import { DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/des
 import { program, Command } from "commander";
 import * as Config from "./config"
 import { AccountData } from "@cosmjs/amino";
-import { ExecuteMsg } from "@desmoslabs/contract-types/contracts/cw721-poap";
+import { Cw721PoapClient } from "@desmoslabs/contract-types/contracts/Cw721Poap.client";
 import { createCw721Program } from "./cw721-utils";
 
 async function main() {
@@ -17,7 +17,7 @@ async function main() {
     program.parse();
 }
 
-function buildExecuteCommands(program: Command, client: DesmosClient, account: AccountData) {
+function buildExecuteCommands(program: Command, desmosClient: DesmosClient, account: AccountData) {
     program
         .command("mint")
         .description("Mint a new NFT, can only be called by the contract minter")
@@ -26,16 +26,15 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .requiredOption("--owner <owner>", "Owner of the newly minter NFT")
         .option("--token-uri <token-uri>", "Universal resource identifier for this NFT")
         .action(async (options) => {
-            const response = await client.execute(account.address, options.contract, {
-                mint: {
-                    token_id: options.tokenId,
-                    owner: options.owner,
-                    token_uri: options.tokenUri,
-                    extension: {
-                        claimer: options.owner
-                    },
-                }
-            } as ExecuteMsg, "auto");
+            const client = new Cw721PoapClient(desmosClient, account.address, options.contract);
+            const response = await client.mint({
+                tokenId: options.tokenId,
+                owner: options.owner,
+                tokenUri: options.tokenUri,
+                extension: {
+                    claimer: options.owner
+                },
+            });
             console.log(response);
         });
 

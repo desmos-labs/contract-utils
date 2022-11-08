@@ -1,13 +1,15 @@
 import { DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/desmjs";
 import { program } from "commander";
 import * as Config from "./config"
-import { EventInfo, ExecuteMsg, InstantiateMsg, QueryMsg } from "@desmoslabs/contract-types/contracts/poap";
+import { PoapClient } from "@desmoslabs/contract-types/contracts/Poap.client";
+import { InstantiateMsg } from "@desmoslabs/contract-types/contracts/Poap.types";
 import { AccountData } from "@cosmjs/amino";
 import { parseBool, parseCWTimestamp, parseIpfsUri } from "./cli-parsing-utils";
+import { ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 
 async function main() {
     const signer = await OfflineSignerAdapter.fromMnemonic(SigningMode.DIRECT, Config.mnemonic);
-    const client = await DesmosClient.connectWithSigner(Config.rpcEndpoint, signer, {
+    const desmosClient = await DesmosClient.connectWithSigner(Config.rpcEndpoint, signer, {
         gasPrice: Config.gasPrice
     });
     const account: AccountData = (await signer.getCurrentAccount()) as AccountData;
@@ -48,7 +50,7 @@ async function main() {
                 }
             }
 
-            const initResult = await client.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
+            const initResult = await desmosClient.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
             console.log("Contract initialized", initResult);
         })
 
@@ -62,12 +64,13 @@ async function main() {
         .action(async (options) => {
             console.log(`Querying state of ${options.contract}`)
             // Query config
-            const config = await client.queryContractSmart(options.contract, { config: {} } as QueryMsg);
+            const client = new PoapClient(desmosClient, account.address, options.contract);
+            const config = await client.config();
             console.log("Config", config);
 
             // Query event info
-            const event_info = await client.queryContractSmart(options.contract, { event_info: {} } as QueryMsg);
-            console.log("EventInfo", event_info);
+            const eventInfo = await client.eventInfo();
+            console.log("EventInfo", eventInfo);
         });
 
     queryCommand
@@ -77,12 +80,8 @@ async function main() {
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (options) => {
             console.log(`Querying minted amount for ${options.user}`)
-            // Query config
-            const mintedAmount = await client.queryContractSmart(options.contract, {
-                minted_amount: {
-                    user: options.user
-                }
-            } as QueryMsg);
+            const client = new PoapClient(desmosClient, account.address, options.contract);
+            const mintedAmount = await client.mintedAmount({ user: options.user });
             console.log("mintedAmount", mintedAmount);
         });
 
@@ -94,43 +93,39 @@ async function main() {
         .option("--include-expired <include-expired>", "Unset or false will filter out expired approvals", parseBool, false)
         .action(async (options) => {
             console.log(`Querying all nft info of token id ${options.tokenId}`);
-            const info = await client.queryContractSmart(options.contract, {
-                all_nft_info: { token_id: options.tokenId, include_expired: options.includeExpired },
-            } as QueryMsg);
+            const client = new PoapClient(desmosClient, account.address, options.contract);
+            const info = await client.allNftInfo({ tokenId: options.tokenId, includeExpired: options.includeExpired });
             console.log("All NFT info", info)
         });
 
     queryCommand
-    .command("tokens")
-    .description("Queries all the tokens owned by the given address")
-    .requiredOption("--contract <contract>", "bech32 encoded contract address")
-    .requiredOption("--owner <owner>", "Address of the owner to query")
-    .option("--start-after <start-after>", "")
-    .option("--limit <limit>", "Limitation to list the number of tokens", parseInt, 0)
-    .action(async (options) => {
-        console.log(`Queries all tokens owned by ${options.owner}`);
-        const tokens = await client.queryContractSmart(options.contract, {
-            tokens: { owner: options.owner, start_after: options.startAfter, limit: options.limit },
-        } as QueryMsg);
-        console.log("tokens", tokens);
-    });
+        .command("tokens")
+        .description("Queries all the tokens owned by the given address")
+        .requiredOption("--contract <contract>", "bech32 encoded contract address")
+        .requiredOption("--owner <owner>", "Address of the owner to query")
+        .option("--start-after <start-after>", "")
+        .option("--limit <limit>", "Limitation to list the number of tokens", parseInt, 0)
+        .action(async (options) => {
+            console.log(`Queries all tokens owned by ${options.owner}`);
+            const client = new PoapClient(desmosClient, account.address, options.contract);
+            const tokens = await client.tokens({ owner: options.owner, startAfter: options.startAfter, limit: options.limit });
+            console.log("tokens", tokens);
+        });
 
     program.command("mint-enabled")
         .description("Enable/disable the possibility to mint a poap from the users")
         .argument("<boolean>", "true to allow mint from the users, false to disable", parseBool)
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (enable, options) => {
-            let msg: ExecuteMsg;
-
+            const client = new PoapClient(desmosClient, account.address, options.contract);
+            let response: ExecuteResult;
             if (enable) {
                 console.log(`Enabling mint for contract ${options.contract}`);
-                msg = { enable_mint: {} }
+                response = await client.enableMint();
             } else {
                 console.log(`Disabling mint for contract ${options.contract}`);
-                msg = { enable_mint: {} }
+                response = await client.disableMint();
             }
-
-            const response = await client.execute(account.address, options.contract, msg, "auto");
             console.log(response);
         });
 
@@ -138,7 +133,8 @@ async function main() {
         .description("Mint a poap for the current user")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (options) => {
-            const response = await client.execute(account.address, options.contract, { mint: {} } as ExecuteMsg, "auto");
+            const client = new PoapClient(desmosClient, account.address, options.contract);
+            const response = await client.mint();
             console.log(response);
         });
 
@@ -148,11 +144,10 @@ async function main() {
         .argument("<address>", "bech32 address of the user that will receive the poap")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (address, options) => {
-            const response = await client.execute(account.address, options.contract, {
-                mint_to: {
-                    recipient: address
-                }
-            } as ExecuteMsg, "auto");
+            const client = new PoapClient(desmosClient, account.address, options.contract);
+            const response = await client.mintTo({
+                recipient: address
+            });
             console.log(response);
         });
 
@@ -166,16 +161,12 @@ async function main() {
                 console.log("Nothing to update");
                 return;
             }
-
-            const currentEventInfo: EventInfo = await client.queryContractSmart(options.contract, { event_info: {} } as QueryMsg);
-            let msg: ExecuteMsg = {
-                update_event_info: {
-                    start_time: options.start ?? currentEventInfo.start_time,
-                    end_time: options.end ?? currentEventInfo.end_time
-                }
-            };
-
-            const response = await client.execute(account.address, options.contract, msg, "auto");
+            const client = new PoapClient(desmosClient, account.address, options.contract);
+            const currentEventInfo = await client.eventInfo();
+            const response = await client.updateEventInfo({
+                startTime: options.start ?? currentEventInfo.start_time,
+                endTime: options.end ?? currentEventInfo.end_time
+            });
             console.log(response);
         })
 
@@ -183,14 +174,12 @@ async function main() {
         .description("Updates who have the admin rights over the contract")
         .argument("<address>", "new admin's bech32 address")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
-        .action(async (new_admin, options) => {
-            console.log(`Setting new admin address to ${new_admin}`);
-
-            const response = await client.execute(account.address, options.contract, {
-                update_admin: {
-                    new_admin: new_admin
-                }
-            } as ExecuteMsg, "auto");
+        .action(async (newAdmin, options) => {
+            console.log(`Setting new admin address to ${newAdmin}`);
+            const client = new PoapClient(desmosClient, account.address, options.contract);
+            const response = await client.updateAdmin({
+                newAdmin
+            });
             console.log(response);
         });
 
@@ -198,19 +187,18 @@ async function main() {
         .description("Updates who have the minting rights over the contract")
         .argument("<address>", "new minter's bech32 address")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
-        .action(async (new_minter, options) => {
-            console.log(`Setting new minter address to ${new_minter}`);
-
-            const response = await client.execute(account.address, options.contract, {
-                update_minter: {
-                    new_minter: new_minter
-                }
-            } as ExecuteMsg, "auto");
+        .action(async (newMinter, options) => {
+            console.log(`Setting new minter address to ${newMinter}`);
+            const client = new PoapClient(desmosClient, account.address, options.contract);
+            const response = await client.updateMinter({
+                newMinter: newMinter
+            });
             console.log(response);
         });
 
     console.log(`Executing as ${account.address}`);
     program.parse();
 }
+
 
 main();

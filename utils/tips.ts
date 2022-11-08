@@ -1,15 +1,10 @@
-import {Coin, DesmosClient, OfflineSignerAdapter, SigningMode} from "@desmoslabs/desmjs";
-import {program} from "commander";
-import * as Config from "./config"
-import {AccountData} from "@cosmjs/amino";
-import {
-    ExecuteMsg,
-    InstantiateMsg,
-    QueryConfigResponse,
-    QueryMsg, ServiceFee, Tip,
-    TipsResponse
-} from "@desmoslabs/contract-types/contracts/tips";
-import {parseCoinList} from "./cli-parsing-utils";
+import { Coin, DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/desmjs";
+import { program } from "commander";
+import * as Config from "./config";
+import { AccountData } from "@cosmjs/amino";
+import { TipsClient } from "@desmoslabs/contract-types/contracts/Tips.client";
+import { InstantiateMsg, ServiceFee, Tip } from "@desmoslabs/contract-types/contracts/Tips.types";
+import { parseCoinList } from "./cli-parsing-utils";
 
 function logTips(tips: Tip[]) {
     if (tips.length === 0) {
@@ -34,7 +29,7 @@ function mergeCoins(tipAmount: Coin[]): Coin[] {
 
     tipAmount.forEach(coin => {
         const value = coins[coin.denom];
-        if(value === undefined) {
+        if (value === undefined) {
             coins[coin.denom] = parseInt(coin.amount);
         } else {
             coins[coin.denom] = value + parseInt(coin.amount);
@@ -53,7 +48,7 @@ function computeFees(tips: Coin[], serviceFee: any): Coin[] {
         const percentage = parseFloat(serviceFee.percentage.value) / 100;
         return tips.map(c => {
             const coinAmount = parseFloat(c.amount);
-            return {...c, amount: Math.round(coinAmount * percentage).toString()}
+            return { ...c, amount: Math.round(coinAmount * percentage).toString() }
         })
     } else {
         return []
@@ -62,7 +57,7 @@ function computeFees(tips: Coin[], serviceFee: any): Coin[] {
 
 async function main() {
     const signer = await OfflineSignerAdapter.fromMnemonic(SigningMode.DIRECT, Config.mnemonic);
-    const client = await DesmosClient.connectWithSigner(Config.rpcEndpoint, signer, {
+    const desmosClient = await DesmosClient.connectWithSigner(Config.rpcEndpoint, signer, {
         gasPrice: Config.gasPrice
     });
     const account: AccountData = (await signer.getCurrentAccount()) as AccountData;
@@ -102,7 +97,7 @@ async function main() {
                 service_fee: fee,
                 subspace_id: options.subspace_id.toString()
             };
-            const initResult = await client.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
+            const initResult = await desmosClient.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
             console.log("Contract initialized", initResult);
         })
 
@@ -112,27 +107,23 @@ async function main() {
         .requiredOption("--coins <coins>", "amount of coins to tip to the user. Comma separated list of coins ex: 100udsm,100uatom", parseCoinList)
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (receiver, options) => {
-            console.log(`Sending tip to ${receiver}`)
-            const config = await client.queryContractSmart(options.contract, {
-                config: {}
-            } as QueryMsg);
-
+            console.log(`Sending tip to ${receiver}`);
+            const client = new TipsClient(desmosClient, account.address, options.contract);
+            const config = await client.config();
             const fees = computeFees(options.coins, config.service_fee);
             const funds = mergeCoins([...options.coins, ...fees]);
             console.log("Tip fees", fees);
             console.log("Tip amount", options.coins);
             console.log("Sent amount", funds);
 
-            const response = await client.execute(account.address, options.contract, {
-                send_tip: {
-                    amount: options.coins,
-                    target: {
-                        user_target: {
-                            receiver: receiver,
-                        }
+            const response = await client.sendTip({
+                amount: options.coins,
+                target: {
+                    user_target: {
+                        receiver: receiver,
                     }
                 }
-            } as ExecuteMsg, "auto", undefined, funds);
+            }, "auto", "", funds);
             console.log(response);
         })
 
@@ -142,26 +133,22 @@ async function main() {
         .requiredOption("--coins <coins>", "amount of coins to tip to the user. Comma separated list of coins ex: 100udsm,100uatom", parseCoinList)
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (postId, options) => {
-            const config = await client.queryContractSmart(options.contract, {
-                config: {}
-            } as QueryMsg);
-
+            const client = new TipsClient(desmosClient, account.address, options.contract);
+            const config = await client.config();
             const fees = computeFees(options.coins, config.service_fee);
             const funds = mergeCoins([...options.coins, ...fees]);
             console.log("Tip fees", fees);
             console.log("Tip amount", options.coins);
             console.log("Sent amount", funds);
 
-            const response = await client.execute(account.address, options.contract, {
-                send_tip: {
-                    amount: options.coins,
-                    target: {
-                        content_target: {
-                            post_id: postId.toString(),
-                        }
+            const response = await client.sendTip({
+                amount: options.coins,
+                target: {
+                    content_target: {
+                        post_id: postId.toString(),
                     }
                 }
-            } as ExecuteMsg, "auto", undefined, funds);
+            }, "auto", "", funds);
             console.log(response);
         })
 
@@ -171,18 +158,18 @@ async function main() {
         .option("--fixed <coins>", "fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
         .option("--percentage <value-decimals>", "percentage fee applied to the tip. ex 1", parseFloat)
         .action(async (options) => {
-            let new_fee = null;
+            let newFee = null;
 
             if (options.fixed !== undefined) {
                 console.log("Updating fee to fixed, new amount:", options.fixed);
-                new_fee = {
+                newFee = {
                     fixed: {
                         amount: options.fixed
                     }
                 } as ServiceFee
             } else if (options.percentage !== undefined) {
                 console.log("Updating fee to percentage, new value:", options.percentage.toString());
-                new_fee = {
+                newFee = {
                     percentage: {
                         value: options.percentage.toString()
                     }
@@ -190,12 +177,8 @@ async function main() {
             } else {
                 console.log("Removing service fee");
             }
-
-            const response = await client.execute(account.address, options.contract, {
-                update_service_fee: {
-                    new_fee
-                }
-            } as ExecuteMsg, "auto", undefined, options.coins);
+            const client = new TipsClient(desmosClient, account.address, options.contract);
+            const response = await client.updateServiceFee({ newFee }, "auto", "", options.coins);
             console.log(response);
         });
 
@@ -203,14 +186,10 @@ async function main() {
         .description("updates who have the admin rights over the contract")
         .argument("<address>", "new admin's bech32 address")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
-        .action(async (new_admin, options) => {
-            console.log(`Setting new admin address to ${new_admin}`);
-
-            const response = await client.execute(account.address, options.contract, {
-                update_admin: {
-                    new_admin
-                }
-            } as ExecuteMsg, "auto");
+        .action(async (newAdmin, options) => {
+            console.log(`Setting new admin address to ${newAdmin}`);
+            const client = new TipsClient(desmosClient, account.address, options.contract);
+            const response = await client.updateAdmin({ newAdmin });
             console.log(response);
         });
 
@@ -218,14 +197,10 @@ async function main() {
         .description("updates the amount of tips records stored from the contract")
         .argument("<new-size>", "new tips record size", parseInt)
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
-        .action(async (new_size, options) => {
-            console.log(`Setting new tips record size ${new_size}`);
-
-            const response = await client.execute(account.address, options.contract, {
-                update_saved_tips_history_size: {
-                    new_size
-                }
-            } as ExecuteMsg, "auto");
+        .action(async (newSize, options) => {
+            console.log(`Setting new tips record size ${newSize}`);
+            const client = new TipsClient(desmosClient, account.address, options.contract);
+            const response = await client.updateSavedTipsHistorySize({ newSize });
             console.log(response);
         });
 
@@ -235,12 +210,8 @@ async function main() {
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (receiver, options) => {
             console.log(`Claiming contract fees and send to ${receiver}`);
-
-            const response = await client.execute(account.address, options.contract, {
-                claim_fees: {
-                    receiver
-                }
-            } as ExecuteMsg, "auto");
+            const client = new TipsClient(desmosClient, account.address, options.contract);
+            const response = await client.claimFees({ receiver });
             console.log(response);
         });
 
@@ -250,10 +221,8 @@ async function main() {
     queryCommand.command("config")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (options) => {
-            const response = await client.queryContractSmart(options.contract, {
-                config: {}
-            } as QueryMsg) as QueryConfigResponse;
-
+            const client = new TipsClient(desmosClient, account.address, options.contract);
+            const response = await client.config();
             console.log("Admin", response.admin);
             console.log("Subspace", response.subspace_id);
             console.log("saved_tips_record_size:", response.tips_history_size);
@@ -265,12 +234,8 @@ async function main() {
         .argument("<sender>", "sender's bech32 encoded address")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (sender, options) => {
-            const response = await client.queryContractSmart(options.contract, {
-                user_sent_tips: {
-                    user: sender
-                }
-            } as QueryMsg) as TipsResponse;
-
+            const client = new TipsClient(desmosClient, account.address, options.contract);
+            const response = await client.userSentTips({ user: sender });
             logTips(response.tips);
         })
 
@@ -279,12 +244,8 @@ async function main() {
         .argument("<receiver>", "receiver's bech32 encoded address")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (receiver, options) => {
-            const response = await client.queryContractSmart(options.contract, {
-                user_received_tips: {
-                    user: receiver
-                }
-            } as QueryMsg) as TipsResponse;
-
+            const client = new TipsClient(desmosClient, account.address, options.contract);
+            const response = await client.userReceivedTips({ user: receiver });
             logTips(response.tips);
         })
 
@@ -293,12 +254,8 @@ async function main() {
         .argument("<post-id>", "id of the post of interest")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (postId, options) => {
-            const response = await client.queryContractSmart(options.contract, {
-                post_received_tips: {
-                    post_id: postId.toString()
-                }
-            } as QueryMsg) as TipsResponse;
-
+            const client = new TipsClient(desmosClient, account.address, options.contract);
+            const response = await client.postReceivedTips({ postId: postId.toString() });
             logTips(response.tips);
         })
 

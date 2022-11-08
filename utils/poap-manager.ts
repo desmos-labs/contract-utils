@@ -1,13 +1,14 @@
-import {DesmosClient, OfflineSignerAdapter, SigningMode} from "@desmoslabs/desmjs";
-import {program} from "commander";
+import { DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/desmjs";
+import { program } from "commander";
 import * as Config from "./config"
-import {ExecuteMsg, InstantiateMsg, QueryMsg} from "@desmoslabs/contract-types/contracts/poap-manager";
-import {AccountData} from "@cosmjs/amino";
-import {parseCWTimestamp, parseIpfsUri} from "./cli-parsing-utils";
+import { PoapManagerClient } from "@desmoslabs/contract-types/contracts/PoapManager.client";
+import { InstantiateMsg } from "@desmoslabs/contract-types/contracts/PoapManager.types";
+import { AccountData } from "@cosmjs/amino";
+import { parseCWTimestamp, parseIpfsUri } from "./cli-parsing-utils";
 
 async function main() {
     const signer = await OfflineSignerAdapter.fromMnemonic(SigningMode.DIRECT, Config.mnemonic);
-    const client = await DesmosClient.connectWithSigner(Config.rpcEndpoint, signer, {
+    const desmosClient = await DesmosClient.connectWithSigner(Config.rpcEndpoint, signer, {
         gasPrice: Config.gasPrice
     });
     const account: AccountData = (await signer.getCurrentAccount()) as AccountData;
@@ -54,7 +55,7 @@ async function main() {
                 }
             }
 
-            const initResult = await client.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
+            const initResult = await desmosClient.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
             console.log("Contract initialized", initResult);
         })
 
@@ -68,7 +69,8 @@ async function main() {
         .action(async (options) => {
             console.log(`Querying state of ${options.contract}`)
             // Query config
-            const config = await client.queryContractSmart(options.contract, {config: {}} as QueryMsg);
+            const client = new PoapManagerClient(desmosClient, account.address, options.contract);
+            const config = await client.config();
             console.log("Config", config);
         });
 
@@ -76,8 +78,8 @@ async function main() {
         .description("Claim a poap")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (options) => {
-            const msg: ExecuteMsg = { claim: {} };
-            const response = await client.execute(account.address, options.contract, msg, "auto");
+            const client = new PoapManagerClient(desmosClient, account.address, options.contract);
+            const response = await client.claim();
             console.log(response);
         });
 
@@ -86,11 +88,8 @@ async function main() {
         .argument("<address>", "bech32 address of the user that will receive the poap")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (address, options) => {
-            const response = await client.execute(account.address, options.contract, {
-                mint_to: {
-                    recipient: address
-                }
-            } as ExecuteMsg, "auto");
+            const client = new PoapManagerClient(desmosClient, account.address, options.contract);
+            const response = await client.mintTo({ recipient: address });
             console.log(response);
         });
 
@@ -98,14 +97,10 @@ async function main() {
         .description("Updates who have the admin rights over the contract")
         .argument("<address>", "new admin's bech32 address")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
-        .action(async (new_admin, options) => {
-            console.log(`Setting new admin address to ${new_admin}`);
-
-            const response = await client.execute(account.address, options.contract, {
-                update_admin: {
-                    new_admin: new_admin
-                }
-            } as ExecuteMsg, "auto");
+        .action(async (newAdmin, options) => {
+            console.log(`Setting new admin address to ${newAdmin}`);
+            const client = new PoapManagerClient(desmosClient, account.address, options.contract);
+            const response = await client.updateAdmin({ newAdmin });
             console.log(response);
         });
 

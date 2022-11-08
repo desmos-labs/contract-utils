@@ -1,7 +1,8 @@
 import { DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/desmjs";
 import { program, Command } from "commander";
-import * as Config from "./config"
-import { ExecuteMsg, InstantiateMsg, QueryMsg, Rarity } from "@desmoslabs/contract-types/contracts/remarkables";
+import * as Config from "./config";
+import { RemarkablesClient } from "@desmoslabs/contract-types/contracts/Remarkables.client";
+import { InstantiateMsg, Rarity } from "@desmoslabs/contract-types/contracts/Remarkables.types";
 import { AccountData } from "@cosmjs/amino";
 import { parseBool, parseCoinList } from "./cli-parsing-utils";
 
@@ -42,7 +43,7 @@ function buildRarities(engagementThresholds: number[], mintFeesList: { denom: st
 
 async function main() {
     const signer = await OfflineSignerAdapter.fromMnemonic(SigningMode.DIRECT, Config.mnemonic);
-    const client = await DesmosClient.connectWithSigner(Config.rpcEndpoint, signer, {
+    const desmosClient = await DesmosClient.connectWithSigner(Config.rpcEndpoint, signer, {
         gasPrice: Config.gasPrice
     });
     const account: AccountData = (await signer.getCurrentAccount()) as AccountData;
@@ -72,14 +73,14 @@ async function main() {
                 subspace_id: options.subspaceId.toString(),
                 rarities: buildRarities(options.engagementThresholds, options.mintFeesList),
             };
-            const initResult = await client.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
+            const initResult = await desmosClient.instantiate(account!.address, options.codeId, instantiateMsg, options.name, "auto");
             console.log("Contract initialized", initResult);
         });
-    buildExecuteCommands(program, client, account);
-    buildQueryCommands(program, client);
+    buildExecuteCommands(program, desmosClient, account);
+    buildQueryCommands(program, desmosClient, account);
     program.parse();
 }
-function buildExecuteCommands(program: Command, client: DesmosClient, account: AccountData) {
+function buildExecuteCommands(program: Command, desmosClient: DesmosClient, account: AccountData) {
     program
         .command("mint")
         .description("Mint a remarkables for the given post")
@@ -89,9 +90,8 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .requiredOption("--rarity-level <rarity-level>", "level which remarkables would be minted", parseInt)
         .requiredOption("--mint-fees <mint-fees>", "fees to mint the remarkables. ex: 1000stkae,1000udsm", parseCoinList)
         .action(async (options) => {
-            const response = await client.execute(account.address, options.contract, {
-                mint: { post_id: options.postId.toString(), remarkables_uri: options.remarkablesUri, rarity_level: options.rarityLevel }
-            } as ExecuteMsg, "auto", "", options.mintFees);
+            const client = new RemarkablesClient(desmosClient, account.address, options.contract);
+            const response = await client.mint({ postId: options.postId.toString(), remarkablesUri: options.remarkablesUri, rarityLevel: options.rarityLevel });
             console.log(response);
         });
     program
@@ -101,9 +101,8 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .requiredOption("--rarity-level <rarity-level>", "level which the mint fee would be updated", parseInt)
         .requiredOption("--mint-fees <mint-fees>", "new mint fees that would be set to the rarity level. ex: 1000stkae,1000udsm", parseCoinList)
         .action(async (options) => {
-            const response = await client.execute(account.address, options.contract, {
-                update_rarity_mint_fees: { rarity_level: options.rarityLevel, new_fees: options.mintFees }
-            } as ExecuteMsg, "auto");
+            const client = new RemarkablesClient(desmosClient, account.address, options.contract);
+            const response = await client.updateRarityMintFees({ rarityLevel: options.rarityLevel, newFees: options.mintFees });
             console.log(response);
         })
     program
@@ -113,28 +112,22 @@ function buildExecuteCommands(program: Command, client: DesmosClient, account: A
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (newAdmin, options) => {
             console.log(`Setting new admin address to ${newAdmin}`);
-            const response = await client.execute(account.address, options.contract, {
-                update_admin: {
-                    new_admin: newAdmin
-                }
-            } as ExecuteMsg, "auto");
+            const client = new RemarkablesClient(desmosClient, account.address, options.contract);
+            const response = await client.updateAdmin({ newAdmin });
             console.log(response);
         });
-        program.command("claim-fees")
+    program.command("claim-fees")
         .description("claim the fees collected from the contract")
         .argument("<receiver>", "bech32 address to which they will be sent")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (receiver, options) => {
             console.log(`Claiming contract fee and send to ${receiver}`);
-            const response = await client.execute(account.address, options.contract, {
-                claim_fees: {
-                    receiver
-                }
-            } as ExecuteMsg, "auto");
+            const client = new RemarkablesClient(desmosClient, account.address, options.contract);
+            const response = await client.claimFees({ receiver });
             console.log(response);
         });
 }
-function buildQueryCommands(program: Command, client: DesmosClient) {
+function buildQueryCommands(program: Command, desmosClient: DesmosClient, account: AccountData) {
     const queryCommand = program.command("query")
         .description("Subcommand to query the contract");
     queryCommand
@@ -142,8 +135,9 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
         .description("Queries the contract config")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (options) => {
-            console.log(`Querying config of ${options.contract}`)
-            const config = await client.queryContractSmart(options.contract, { config: {} } as QueryMsg);
+            console.log(`Querying config of ${options.contract}`);
+            const client = new RemarkablesClient(desmosClient, account.address, options.contract);
+            const config = await client.config();
             console.log("Config", config);
         });
     queryCommand
@@ -151,8 +145,9 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
         .description("Queries the contract rarities list")
         .requiredOption("--contract <contract>", "bech32 encoded contract address")
         .action(async (options) => {
-            console.log(`Querying rarities of ${options.contract}`)
-            const rarities = await client.queryContractSmart(options.contract, { rarities: {} } as QueryMsg);
+            console.log(`Querying rarities of ${options.contract}`);
+            const client = new RemarkablesClient(desmosClient, account.address, options.contract);
+            const rarities = await client.rarities();
             console.log("Rarities", rarities);
         });
     queryCommand
@@ -163,9 +158,8 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
         .option("--include-expired <include-expired>", "Unset or false will filter out expired approvals", parseBool, false)
         .action(async (options) => {
             console.log(`Querying all nft info of token id ${options.tokenId}`);
-            const info = await client.queryContractSmart(options.contract, {
-                all_nft_info: { token_id: options.tokenId, include_expired: options.includeExpired },
-            } as QueryMsg);
+            const client = new RemarkablesClient(desmosClient, account.address, options.contract);
+            const info = await client.allNftInfo({ tokenId: options.tokenId, includeExpired: options.includeExpired });
             console.log("All NFT info", info)
         });
     queryCommand
@@ -177,9 +171,8 @@ function buildQueryCommands(program: Command, client: DesmosClient) {
         .option("--limit <limit>", "Limitation to list the number of tokens", parseInt)
         .action(async (options) => {
             console.log(`Queries all tokens owned by ${options.owner}`);
-            const tokens = await client.queryContractSmart(options.contract, {
-                tokens: { owner: options.owner, start_after: options.startAfter, limit: options.limit },
-            } as QueryMsg);
+            const client = new RemarkablesClient(desmosClient, account.address, options.contract);
+            const tokens = await client.tokens({ owner: options.owner, startAfter: options.startAfter, limit: options.limit });
             console.log("tokens", tokens);
         });
 }
