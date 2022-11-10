@@ -20,8 +20,7 @@
     "@cosmjs/cosmwasm-stargate": "^0.29.3",
     "@cosmjs/crypto": "^0.29.3",
     "@desmoslabs/contract-types": "^1.0.0",
-    "@desmoslabs/desmjs": "^4.3.2",
-    "@desmoslabs/desmjs-types": "^4.3.1",
+    "@desmoslabs/desmjs": "^4.6.2",
     "commander": "^9.4.0",
     "inquirer": "^9.0.2"
   },
