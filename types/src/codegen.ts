@@ -55,7 +55,8 @@ async function run(contracts: ContractFile[], outPath: string) {
         enabled: true
       },
       client: {
-        enabled: true
+        enabled: true,
+        noImplicitOverride: true
       },
       reactQuery: {
         enabled: true,
