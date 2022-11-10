@@ -4,6 +4,65 @@
 * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
 */
 
+export type Uint64 = string;
+export type Uint128 = string;
+export interface InstantiateMsg {
+  admin: string;
+  cw721_code_id: Uint64;
+  cw721_instantiate_msg: InstantiateMsg1;
+  rarities: Rarity[];
+  subspace_id: Uint64;
+}
+export interface InstantiateMsg1 {
+  minter: string;
+  name: string;
+  symbol: string;
+}
+export interface Rarity {
+  engagement_threshold: number;
+  mint_fees: Coin[];
+}
+export interface Coin {
+  amount: Uint128;
+  denom: string;
+  [k: string]: unknown;
+}
+export type ExecuteMsg = {
+  mint: {
+    post_id: Uint64;
+    rarity_level: number;
+    remarkables_uri: string;
+  };
+} | {
+  update_rarity_mint_fees: {
+    new_fees: Coin[];
+    rarity_level: number;
+  };
+} | {
+  update_admin: {
+    new_admin: string;
+  };
+} | {
+  claim_fees: {
+    receiver: string;
+  };
+};
+export type QueryMsg = {
+  config: {};
+} | {
+  rarities: {};
+} | {
+  all_nft_info: {
+    include_expired?: boolean | null;
+    token_id: string;
+  };
+} | {
+  tokens: {
+    limit?: number | null;
+    owner: string;
+    start_after?: string | null;
+  };
+};
 export type Expiration = {
   at_height: number;
 } | {
@@ -12,7 +71,6 @@ export type Expiration = {
   never: {};
 };
 export type Timestamp = Uint64;
-export type Uint64 = string;
 export interface AllNftInfoResponseForMetadata {
   access: OwnerOfResponse;
   info: NftInfoResponseForMetadata;
@@ -33,55 +91,6 @@ export interface Metadata {
   post_id: number;
   rarity_level: number;
   subspace_id: number;
-  [k: string]: unknown;
-}
-export type ExecuteMsg = {
-  mint: {
-    post_id: Uint64;
-    rarity_level: number;
-    remarkables_uri: string;
-    [k: string]: unknown;
-  };
-} | {
-  update_rarity_mint_fees: {
-    new_fees: Coin[];
-    rarity_level: number;
-    [k: string]: unknown;
-  };
-} | {
-  update_admin: {
-    new_admin: string;
-    [k: string]: unknown;
-  };
-} | {
-  claim_fees: {
-    receiver: string;
-    [k: string]: unknown;
-  };
-};
-export type Uint128 = string;
-export interface Coin {
-  amount: Uint128;
-  denom: string;
-  [k: string]: unknown;
-}
-export interface InstantiateMsg {
-  admin: string;
-  cw721_code_id: Uint64;
-  cw721_instantiate_msg: InstantiateMsg1;
-  rarities: Rarity[];
-  subspace_id: Uint64;
-  [k: string]: unknown;
-}
-export interface InstantiateMsg1 {
-  minter: string;
-  name: string;
-  symbol: string;
-}
-export interface Rarity {
-  engagement_threshold: number;
-  mint_fees: Coin[];
-  [k: string]: unknown;
 }
 export type Addr = string;
 export interface QueryConfigResponse {
@@ -89,33 +98,9 @@ export interface QueryConfigResponse {
   cw721_address: Addr;
   cw721_code_id: Uint64;
   subspace_id: Uint64;
-  [k: string]: unknown;
 }
-export type QueryMsg = {
-  config: {
-    [k: string]: unknown;
-  };
-} | {
-  rarities: {
-    [k: string]: unknown;
-  };
-} | {
-  all_nft_info: {
-    include_expired?: boolean | null;
-    token_id: string;
-    [k: string]: unknown;
-  };
-} | {
-  tokens: {
-    limit?: number | null;
-    owner: string;
-    start_after?: string | null;
-    [k: string]: unknown;
-  };
-};
 export interface QueryRaritiesResponse {
   rarities: Rarity[];
-  [k: string]: unknown;
 }
 export interface TokensResponse {
   tokens: string[];
