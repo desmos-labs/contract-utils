@@ -1661,9 +1661,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cosmwasm/ts-codegen@npm:^0.21.1":
-  version: 0.21.1
-  resolution: "@cosmwasm/ts-codegen@npm:0.21.1"
+"@cosmwasm/ts-codegen@npm:^0.21.2":
+  version: 0.21.2
+  resolution: "@cosmwasm/ts-codegen@npm:0.21.2"
   dependencies:
     "@babel/core": 7.18.10
     "@babel/generator": 7.18.12
@@ -1694,7 +1694,7 @@ __metadata:
     wasm-ast-types: ^0.15.0
   bin:
     cosmwasm-ts-codegen: main/ts-codegen.js
-  checksum: 399e3055adef9bd0463185a0c04c6560ec7a8bc015a5cbacf0e2fcee34b009b99d095e23bc302f6cbe697f0714c510e056bf13f150651bae7d67c322f3ac87d6
+  checksum: bc6fb4b30cb874fc238a4f76217f87d635faeb687ce6a630d3bc937c25a557db161ea094bf9be4a09e5f630a8eeb5aa02c0e72a5243295c701aabf1b4638479b
   languageName: node
   linkType: hard
 
@@ -1711,7 +1711,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@desmoslabs/contract-types@workspace:types"
   dependencies:
-    "@cosmwasm/ts-codegen": ^0.21.1
+    "@cosmwasm/ts-codegen": ^0.21.2
     "@types/adm-zip": ^0.5.0
     "@types/download": ^8.0.1
     "@types/node": ^18.0.6
