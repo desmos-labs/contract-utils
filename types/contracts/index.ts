@@ -19,12 +19,15 @@ import * as _11 from "./PoapManager.react-query";
 import * as _12 from "./Remarkables.types";
 import * as _13 from "./Remarkables.client";
 import * as _14 from "./Remarkables.react-query";
-import * as _15 from "./Tips.types";
-import * as _16 from "./Tips.client";
-import * as _17 from "./Tips.react-query";
-import * as _18 from "./Cw721Base.types";
-import * as _19 from "./Cw721Base.client";
-import * as _20 from "./Cw721Base.react-query";
+import * as _15 from "./SocialTips.types";
+import * as _16 from "./SocialTips.client";
+import * as _17 from "./SocialTips.react-query";
+import * as _18 from "./Tips.types";
+import * as _19 from "./Tips.client";
+import * as _20 from "./Tips.react-query";
+import * as _21 from "./Cw721Base.types";
+import * as _22 from "./Cw721Base.client";
+import * as _23 from "./Cw721Base.react-query";
 export namespace contracts {
   export const Cw721Poap = { ..._0,
     ..._1,
@@ -46,12 +49,16 @@ export namespace contracts {
     ..._13,
     ..._14
   };
-  export const Tips = { ..._15,
+  export const SocialTips = { ..._15,
     ..._16,
     ..._17
   };
-  export const Cw721Base = { ..._18,
+  export const Tips = { ..._18,
     ..._19,
     ..._20
+  };
+  export const Cw721Base = { ..._21,
+    ..._22,
+    ..._23
   };
 }

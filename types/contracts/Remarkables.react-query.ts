@@ -7,7 +7,7 @@
 import { UseQueryOptions, useQuery, useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { StdFee } from "@cosmjs/amino";
-import { Expiration, Timestamp, Uint64, AllNftInfoResponseForMetadata, OwnerOfResponse, Approval, NftInfoResponseForMetadata, Metadata, ExecuteMsg, Uint128, Coin, InstantiateMsg, InstantiateMsg1, Rarity, Addr, QueryConfigResponse, QueryMsg, QueryRaritiesResponse, TokensResponse } from "./Remarkables.types";
+import { Uint64, Uint128, InstantiateMsg, InstantiateMsg1, Rarity, Coin, ExecuteMsg, QueryMsg, Expiration, Timestamp, AllNftInfoResponseForMetadata, OwnerOfResponse, Approval, NftInfoResponseForMetadata, Metadata, Addr, QueryConfigResponse, QueryRaritiesResponse, TokensResponse } from "./Remarkables.types";
 import { RemarkablesQueryClient, RemarkablesClient } from "./Remarkables.client";
 export const remarkablesQueryKeys = {
   contract: ([{
@@ -34,29 +34,29 @@ export const remarkablesQueryKeys = {
   }] as const)
 };
 export const remarkablesQueries = {
-  config: <TData = ConfigResponse,>({
+  config: <TData = QueryConfigResponse,>({
     client,
     options
-  }: RemarkablesConfigQuery<TData>): UseQueryOptions<ConfigResponse, Error, TData> => ({
+  }: RemarkablesConfigQuery<TData>): UseQueryOptions<QueryConfigResponse, Error, TData> => ({
     queryKey: remarkablesQueryKeys.config(client?.contractAddress),
     queryFn: () => client ? client.config() : Promise.reject(new Error("Invalid client")),
     ...options,
     enabled: !!client && (options?.enabled != undefined ? options.enabled : true)
   }),
-  rarities: <TData = RaritiesResponse,>({
+  rarities: <TData = QueryRaritiesResponse,>({
     client,
     options
-  }: RemarkablesRaritiesQuery<TData>): UseQueryOptions<RaritiesResponse, Error, TData> => ({
+  }: RemarkablesRaritiesQuery<TData>): UseQueryOptions<QueryRaritiesResponse, Error, TData> => ({
     queryKey: remarkablesQueryKeys.rarities(client?.contractAddress),
     queryFn: () => client ? client.rarities() : Promise.reject(new Error("Invalid client")),
     ...options,
     enabled: !!client && (options?.enabled != undefined ? options.enabled : true)
   }),
-  allNftInfo: <TData = AllNftInfoResponse,>({
+  allNftInfo: <TData = AllNftInfoResponseForMetadata,>({
     client,
     args,
     options
-  }: RemarkablesAllNftInfoQuery<TData>): UseQueryOptions<AllNftInfoResponse, Error, TData> => ({
+  }: RemarkablesAllNftInfoQuery<TData>): UseQueryOptions<AllNftInfoResponseForMetadata, Error, TData> => ({
     queryKey: remarkablesQueryKeys.allNftInfo(client?.contractAddress, args),
     queryFn: () => client ? client.allNftInfo({
       includeExpired: args.includeExpired,
@@ -106,39 +106,39 @@ export function useRemarkablesTokensQuery<TData = TokensResponse>({
     enabled: !!client && (options?.enabled != undefined ? options.enabled : true)
   });
 }
-export interface RemarkablesAllNftInfoQuery<TData> extends RemarkablesReactQuery<AllNftInfoResponse, TData> {
+export interface RemarkablesAllNftInfoQuery<TData> extends RemarkablesReactQuery<AllNftInfoResponseForMetadata, TData> {
   args: {
     includeExpired?: boolean;
     tokenId: string;
   };
 }
-export function useRemarkablesAllNftInfoQuery<TData = AllNftInfoResponse>({
+export function useRemarkablesAllNftInfoQuery<TData = AllNftInfoResponseForMetadata>({
   client,
   args,
   options
 }: RemarkablesAllNftInfoQuery<TData>) {
-  return useQuery<AllNftInfoResponse, Error, TData>(remarkablesQueryKeys.allNftInfo(client?.contractAddress, args), () => client ? client.allNftInfo({
+  return useQuery<AllNftInfoResponseForMetadata, Error, TData>(remarkablesQueryKeys.allNftInfo(client?.contractAddress, args), () => client ? client.allNftInfo({
     includeExpired: args.includeExpired,
     tokenId: args.tokenId
   }) : Promise.reject(new Error("Invalid client")), { ...options,
     enabled: !!client && (options?.enabled != undefined ? options.enabled : true)
   });
 }
-export interface RemarkablesRaritiesQuery<TData> extends RemarkablesReactQuery<RaritiesResponse, TData> {}
-export function useRemarkablesRaritiesQuery<TData = RaritiesResponse>({
+export interface RemarkablesRaritiesQuery<TData> extends RemarkablesReactQuery<QueryRaritiesResponse, TData> {}
+export function useRemarkablesRaritiesQuery<TData = QueryRaritiesResponse>({
   client,
   options
 }: RemarkablesRaritiesQuery<TData>) {
-  return useQuery<RaritiesResponse, Error, TData>(remarkablesQueryKeys.rarities(client?.contractAddress), () => client ? client.rarities() : Promise.reject(new Error("Invalid client")), { ...options,
+  return useQuery<QueryRaritiesResponse, Error, TData>(remarkablesQueryKeys.rarities(client?.contractAddress), () => client ? client.rarities() : Promise.reject(new Error("Invalid client")), { ...options,
     enabled: !!client && (options?.enabled != undefined ? options.enabled : true)
   });
 }
-export interface RemarkablesConfigQuery<TData> extends RemarkablesReactQuery<ConfigResponse, TData> {}
-export function useRemarkablesConfigQuery<TData = ConfigResponse>({
+export interface RemarkablesConfigQuery<TData> extends RemarkablesReactQuery<QueryConfigResponse, TData> {}
+export function useRemarkablesConfigQuery<TData = QueryConfigResponse>({
   client,
   options
 }: RemarkablesConfigQuery<TData>) {
-  return useQuery<ConfigResponse, Error, TData>(remarkablesQueryKeys.config(client?.contractAddress), () => client ? client.config() : Promise.reject(new Error("Invalid client")), { ...options,
+  return useQuery<QueryConfigResponse, Error, TData>(remarkablesQueryKeys.config(client?.contractAddress), () => client ? client.config() : Promise.reject(new Error("Invalid client")), { ...options,
     enabled: !!client && (options?.enabled != undefined ? options.enabled : true)
   });
 }

@@ -18,5 +18,8 @@ jobs:
       - name: Install 🔨
         run: yarn install --immutable
 
+      - name: Generate Types 🔨
+        run: yarn types-codegen
+
       - name: Build 🔨
         run: yarn build
