@@ -4,5 +4,10 @@
     "types",
     "utils"
   ],
+  "scripts": {
+    "build": "yarn workspaces foreach --topological-dev --parallel --verbose run build",
+    "lint": "yarn workspaces foreach --topological-dev --parallel --verbose run lint",
+    "lint-fix": "yarn workspaces foreach --topological-dev --parallel --verbose run lint-fix"
+  },
   "packageManager": "yarn@3.2.4"
 }
