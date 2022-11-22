@@ -6,59 +6,43 @@
 
 import * as _0 from "./Cw721Poap.types";
 import * as _1 from "./Cw721Poap.client";
-import * as _2 from "./Cw721Poap.react-query";
-import * as _3 from "./Cw721Remarkables.types";
-import * as _4 from "./Cw721Remarkables.client";
-import * as _5 from "./Cw721Remarkables.react-query";
-import * as _6 from "./Poap.types";
-import * as _7 from "./Poap.client";
-import * as _8 from "./Poap.react-query";
-import * as _9 from "./PoapManager.types";
-import * as _10 from "./PoapManager.client";
-import * as _11 from "./PoapManager.react-query";
-import * as _12 from "./Remarkables.types";
-import * as _13 from "./Remarkables.client";
-import * as _14 from "./Remarkables.react-query";
-import * as _15 from "./SocialTips.types";
-import * as _16 from "./SocialTips.client";
-import * as _17 from "./SocialTips.react-query";
-import * as _18 from "./Tips.types";
-import * as _19 from "./Tips.client";
-import * as _20 from "./Tips.react-query";
-import * as _21 from "./Cw721Base.types";
-import * as _22 from "./Cw721Base.client";
-import * as _23 from "./Cw721Base.react-query";
+import * as _2 from "./Cw721Remarkables.types";
+import * as _3 from "./Cw721Remarkables.client";
+import * as _4 from "./Poap.types";
+import * as _5 from "./Poap.client";
+import * as _6 from "./PoapManager.types";
+import * as _7 from "./PoapManager.client";
+import * as _8 from "./Remarkables.types";
+import * as _9 from "./Remarkables.client";
+import * as _10 from "./SocialTips.types";
+import * as _11 from "./SocialTips.client";
+import * as _12 from "./Tips.types";
+import * as _13 from "./Tips.client";
+import * as _14 from "./Cw721Base.types";
+import * as _15 from "./Cw721Base.client";
 export namespace contracts {
   export const Cw721Poap = { ..._0,
-    ..._1,
-    ..._2
+    ..._1
   };
-  export const Cw721Remarkables = { ..._3,
-    ..._4,
+  export const Cw721Remarkables = { ..._2,
+    ..._3
+  };
+  export const Poap = { ..._4,
     ..._5
   };
-  export const Poap = { ..._6,
-    ..._7,
-    ..._8
+  export const PoapManager = { ..._6,
+    ..._7
   };
-  export const PoapManager = { ..._9,
-    ..._10,
+  export const Remarkables = { ..._8,
+    ..._9
+  };
+  export const SocialTips = { ..._10,
     ..._11
   };
-  export const Remarkables = { ..._12,
-    ..._13,
-    ..._14
+  export const Tips = { ..._12,
+    ..._13
   };
-  export const SocialTips = { ..._15,
-    ..._16,
-    ..._17
-  };
-  export const Tips = { ..._18,
-    ..._19,
-    ..._20
-  };
-  export const Cw721Base = { ..._21,
-    ..._22,
-    ..._23
+  export const Cw721Base = { ..._14,
+    ..._15
   };
 }
