@@ -1,0 +1,25 @@
+name: Build
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup Node 👷
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install 🔨
+        run: yarn install --immutable
+
+      - name: Generate Types 🔨
+        run: yarn types-codegen
+
+      - name: Build 🔨
+        run: yarn build

@@ -6,18 +6,18 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { StdFee } from "@cosmjs/amino";
-import { Expiration, Timestamp, Uint64, AllNftInfoResponseForMetadata, OwnerOfResponse, Approval, NftInfoResponseForMetadata, Metadata, ExecuteMsg, Uint128, Coin, InstantiateMsg, InstantiateMsg1, Rarity, Addr, QueryConfigResponse, QueryMsg, QueryRaritiesResponse, TokensResponse } from "./Remarkables.types";
+import { Uint64, Uint128, InstantiateMsg, InstantiateMsg1, Rarity, Coin, ExecuteMsg, QueryMsg, Expiration, Timestamp, AllNftInfoResponseForMetadata, OwnerOfResponse, Approval, NftInfoResponseForMetadata, Metadata, Addr, QueryConfigResponse, QueryRaritiesResponse, TokensResponse } from "./Remarkables.types";
 export interface RemarkablesReadOnlyInterface {
   contractAddress: string;
-  config: () => Promise<ConfigResponse>;
-  rarities: () => Promise<RaritiesResponse>;
+  config: () => Promise<QueryConfigResponse>;
+  rarities: () => Promise<QueryRaritiesResponse>;
   allNftInfo: ({
     includeExpired,
     tokenId
   }: {
     includeExpired?: boolean;
     tokenId: string;
-  }) => Promise<AllNftInfoResponse>;
+  }) => Promise<AllNftInfoResponseForMetadata>;
   tokens: ({
     limit,
     owner,
@@ -41,12 +41,12 @@ export class RemarkablesQueryClient implements RemarkablesReadOnlyInterface {
     this.tokens = this.tokens.bind(this);
   }
 
-  config = async (): Promise<ConfigResponse> => {
+  config = async (): Promise<QueryConfigResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       config: {}
     });
   };
-  rarities = async (): Promise<RaritiesResponse> => {
+  rarities = async (): Promise<QueryRaritiesResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       rarities: {}
     });
@@ -57,7 +57,7 @@ export class RemarkablesQueryClient implements RemarkablesReadOnlyInterface {
   }: {
     includeExpired?: boolean;
     tokenId: string;
-  }): Promise<AllNftInfoResponse> => {
+  }): Promise<AllNftInfoResponseForMetadata> => {
     return this.client.queryContractSmart(this.contractAddress, {
       all_nft_info: {
         include_expired: includeExpired,

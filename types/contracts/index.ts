@@ -14,10 +14,12 @@ import * as _6 from "./PoapManager.types";
 import * as _7 from "./PoapManager.client";
 import * as _8 from "./Remarkables.types";
 import * as _9 from "./Remarkables.client";
-import * as _10 from "./Tips.types";
-import * as _11 from "./Tips.client";
-import * as _12 from "./Cw721Base.types";
-import * as _13 from "./Cw721Base.client";
+import * as _10 from "./SocialTips.types";
+import * as _11 from "./SocialTips.client";
+import * as _12 from "./Tips.types";
+import * as _13 from "./Tips.client";
+import * as _14 from "./Cw721Base.types";
+import * as _15 from "./Cw721Base.client";
 export namespace contracts {
   export const Cw721Poap = { ..._0,
     ..._1
@@ -34,10 +36,13 @@ export namespace contracts {
   export const Remarkables = { ..._8,
     ..._9
   };
-  export const Tips = { ..._10,
+  export const SocialTips = { ..._10,
     ..._11
   };
-  export const Cw721Base = { ..._12,
+  export const Tips = { ..._12,
     ..._13
+  };
+  export const Cw721Base = { ..._14,
+    ..._15
   };
 }
