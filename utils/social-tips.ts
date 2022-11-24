@@ -43,7 +43,7 @@ function setupExecuteCommand(command: Command, client: DesmosClient, account: Ac
     })
 
   command.command("tip-user")
-    .description("send a tip to an user")
+    .description("send a tip to a user")
     .argument("<application>", "application name")
     .argument("<handle>", "user handle in the provided application")
     .requiredOption("--coins <coins>", "amount of coins to tip to the user. Comma separated list of coins ex: 100udsm,100uatom", parseCoinList)
@@ -68,7 +68,7 @@ function setupExecuteCommand(command: Command, client: DesmosClient, account: Ac
     .requiredOption("--contract <contract>", "bech32 encoded contract address")
     .action(async (options) => {
       let contractClient = new SocialTipsClient(client, account!.address, options.contract);
-      let response = await contractClient.claimTips("auto");
+      let response = await contractClient.claimTips();
       console.log(response)
     });
 
@@ -86,7 +86,7 @@ function setupExecuteCommand(command: Command, client: DesmosClient, account: Ac
     });
 
   command.command("update-max-pending-tips")
-    .description("updates the maximum number of pending tips that can be associated to an user")
+    .description("updates the maximum number of pending tips that can be associated to a user")
     .argument("<max-pending-tips>", "new max pending tips", parseInt)
     .requiredOption("--contract <contract>", "bech32 encoded contract address")
     .action(async (maxPendingTips, options) => {
@@ -119,14 +119,14 @@ function setupExecuteCommand(command: Command, client: DesmosClient, account: Ac
       let response = await contractClient.removePendingTip({
         application,
         handle,
-      }, "auto");
+      });
       console.log(response)
     });
 }
 
 function setupQueryCommand(command: Command, client: DesmosClient, account: AccountData) {
   command.command("user-pending-tips")
-    .description("queries the tips that can be collected from an user")
+    .description("queries the tips that can be collected from a user")
     .argument("<address>", "users's bech32 address")
     .requiredOption("--contract <contract>", "bech32 encoded contract address")
     .action(async (address, options) => {
@@ -138,7 +138,7 @@ function setupQueryCommand(command: Command, client: DesmosClient, account: Acco
     });
 
   command.command("unclaimed-sent-tips")
-    .description("queries the tips that an user has sent that aren't be claimed")
+    .description("queries the tips that a user has sent that aren't be claimed")
     .argument("<address>", "users's bech32 address")
     .requiredOption("--contract <contract>", "bech32 encoded contract address")
     .action(async (address, options) => {
@@ -150,7 +150,7 @@ function setupQueryCommand(command: Command, client: DesmosClient, account: Acco
     });
 
   command.command("config")
-    .description("queries the tips that an user has sent that aren't be claimed")
+    .description("queries the tips that a user has sent that aren't be claimed")
     .requiredOption("--contract <contract>", "bech32 encoded contract address")
     .action(async (options) => {
       let contractClient = new SocialTipsClient(client, account!.address, options.contract);
