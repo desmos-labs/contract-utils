@@ -8,6 +8,7 @@
   "license": "Apache 2.0",
   "private": true,
   "scripts": {
+    "build": "tsc",
     "upload-contract": "ts-node upload-contract.ts",
     "poap": "ts-node poap.ts",
     "cw721-poap": "ts-node cw721-poap.ts",
@@ -17,8 +18,8 @@
     "cw721-remarkables": "ts-node cw721-remarkables.ts"
   },
   "dependencies": {
-    "@cosmjs/cosmwasm-stargate": "^0.29.4",
-    "@cosmjs/crypto": "^0.29.4",
+    "@cosmjs/cosmwasm-stargate": "^0.29.3",
+    "@cosmjs/crypto": "^0.29.3",
     "@desmoslabs/contract-types": "^1.0.0",
     "@desmoslabs/desmjs": "^4.6.2",
     "commander": "^9.4.0",

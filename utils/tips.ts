@@ -1,9 +1,9 @@
-import { Coin, DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/desmjs";
+import {DesmosClient, OfflineSignerAdapter, SigningMode } from "@desmoslabs/desmjs";
 import { program } from "commander";
 import * as Config from "./config";
 import { AccountData } from "@cosmjs/amino";
 import { TipsClient } from "@desmoslabs/contract-types/contracts/Tips.client";
-import { InstantiateMsg, ServiceFee, Tip } from "@desmoslabs/contract-types/contracts/Tips.types";
+import { InstantiateMsg, ServiceFee, Tip, Coin } from "@desmoslabs/contract-types/contracts/Tips.types";
 import { parseCoinList } from "./cli-parsing-utils";
 
 function logTips(tips: Tip[]) {
@@ -158,7 +158,7 @@ async function main() {
         .option("--fixed <coins>", "fixed fee applied to the tip amount. ex: 1000stkae,1000udsm", parseCoinList)
         .option("--percentage <value-decimals>", "percentage fee applied to the tip. ex 1", parseFloat)
         .action(async (options) => {
-            let newFee = null;
+            let newFee : ServiceFee | undefined = undefined;
 
             if (options.fixed !== undefined) {
                 console.log("Updating fee to fixed, new amount:", options.fixed);
@@ -166,14 +166,14 @@ async function main() {
                     fixed: {
                         amount: options.fixed
                     }
-                } as ServiceFee
+                };
             } else if (options.percentage !== undefined) {
                 console.log("Updating fee to percentage, new value:", options.percentage.toString());
                 newFee = {
                     percentage: {
                         value: options.percentage.toString()
                     }
-                } as ServiceFee
+                };
             } else {
                 console.log("Removing service fee");
             }

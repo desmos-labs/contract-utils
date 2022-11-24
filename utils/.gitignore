@@ -1,3 +1,5 @@
+build/
+
 # Ignore installe modules
 node_modules/
 
