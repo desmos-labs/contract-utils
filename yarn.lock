@@ -3288,7 +3288,7 @@ __metadata:
   resolution: "contracts-utils@workspace:utils"
   dependencies:
     "@cosmjs/cosmwasm-stargate": ^0.29.4
-    "@cosmjs/crypto": ^0.29.3
+    "@cosmjs/crypto": ^0.29.4
     "@desmoslabs/contract-types": ^1.0.0
     "@desmoslabs/desmjs": ^4.6.2
     "@types/inquirer": ^9.0.3
