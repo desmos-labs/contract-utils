@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "outDir": "build",
     "experimentalDecorators": true,
-    "rootDir": ".",
+    "rootDir": "src",
     "declaration": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -25,6 +25,6 @@
     "target": "es2017",
   },
   "include": [
-    "**/*"
-  ],
+    "src/**/*"
+  ]
 }

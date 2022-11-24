@@ -9,13 +9,13 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "upload-contract": "ts-node upload-contract.ts",
-    "poap": "ts-node poap.ts",
-    "cw721-poap": "ts-node cw721-poap.ts",
-    "poap-manager": "ts-node poap-manager.ts",
-    "tips": "ts-node tips.ts",
-    "remarkables": "ts-node remarkables.ts",
-    "cw721-remarkables": "ts-node cw721-remarkables.ts"
+    "upload-contract": "ts-node src/upload-contract.ts",
+    "poap": "ts-node src/poap.ts",
+    "cw721-poap": "ts-node src/cw721-poap.ts",
+    "poap-manager": "ts-node src/poap-manager.ts",
+    "tips": "ts-node src/tips.ts",
+    "remarkables": "ts-node src/remarkables.ts",
+    "cw721-remarkables": "ts-node src/cw721-remarkables.ts"
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.29.3",
