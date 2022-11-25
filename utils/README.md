@@ -21,3 +21,4 @@ To execute the scripts then run `yarn utils:$SCRIP_NAME` from the root directory
 * `cw721-remarkables`: Utility script to interact with the cw721 remarkables contract available [here](https://github.com/desmos-labs/desmos-contracts/tree/master/contracts/cw721-remarkables).
 * `remarkables`: Utility script to interact with the remarkables contract available [here](https://github.com/desmos-labs/desmos-contracts/tree/master/contracts/remarkables).
 * `tips`: Utility script to interact with the tips contract available [here](https://github.com/desmos-labs/desmos-contracts/tree/master/contracts/tips).
+* `social-tips`: Utility script to interact with the social-tips contract available [here](https://github.com/desmos-labs/desmos-contracts/tree/master/contracts/social-tips).
