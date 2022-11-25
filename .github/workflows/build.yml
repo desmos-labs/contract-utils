@@ -22,7 +22,7 @@ jobs:
         run: yarn types-codegen
 
       - name: Generate Utils Config 🔨
-      - run: cp ./utils/src/config.example.ts ./utils/src/config.ts
+        run: cp ./utils/src/config.example.ts ./utils/src/config.ts
 
       - name: Build 🔨
         run: yarn build
