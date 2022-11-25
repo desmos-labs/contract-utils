@@ -15,7 +15,8 @@
     "poap-manager": "ts-node src/poap-manager.ts",
     "tips": "ts-node src/tips.ts",
     "remarkables": "ts-node src/remarkables.ts",
-    "cw721-remarkables": "ts-node src/cw721-remarkables.ts"
+    "cw721-remarkables": "ts-node src/cw721-remarkables.ts",
+    "social-tips": "ts-node src/social-tips.ts"
   },
   "dependencies": {
     "@cosmjs/cosmwasm-stargate": "^0.29.3",
