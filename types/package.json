@@ -13,7 +13,7 @@
     "codegen": "ts-node src/codegen.ts"
   },
   "dependencies": {
-    "@cosmwasm/ts-codegen": "^0.22.0",
+    "@cosmwasm/ts-codegen": "^0.23.0",
     "adm-zip": "^0.5.9",
     "commander": "^9.4.0",
     "dotenv": "^16.0.1",
