@@ -19,8 +19,8 @@
     "social-tips": "ts-node src/social-tips.ts"
   },
   "dependencies": {
-    "@cosmjs/cosmwasm-stargate": "^0.29.3",
-    "@cosmjs/crypto": "^0.29.3",
+    "@cosmjs/cosmwasm-stargate": "^0.29.4",
+    "@cosmjs/crypto": "^0.29.4",
     "@desmoslabs/contract-types": "^1.0.0",
     "@desmoslabs/desmjs": "^4.6.3",
     "commander": "^9.4.0",
