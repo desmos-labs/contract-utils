@@ -59,15 +59,12 @@ async function run(contracts: ContractFile[], outPath: string) {
         noImplicitOverride: true
       },
       reactQuery: {
-        enabled: false,
-        /* Disable until the POAP contracts implements the QueryResponse trait.
+        enabled: true,
         optionalClient: true,
         version: 'v4',
         mutations: true,
         queryKeys: true,
         queryFactory: true,
-        */
-
       },
       recoil: {
         enabled: false
