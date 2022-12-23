@@ -1714,7 +1714,7 @@ __metadata:
     "@cosmwasm/ts-codegen": ^0.24.0
     "@tanstack/react-query": ^4.20.4
     "@types/adm-zip": ^0.5.0
-    "@types/download": ^8.0.1
+    "@types/download": ^8.0.2
     "@types/node": ^18.11.15
     adm-zip: ^0.5.10
     commander: ^9.4.0
@@ -2167,14 +2167,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/download@npm:^8.0.1":
-  version: 8.0.1
-  resolution: "@types/download@npm:8.0.1"
+"@types/download@npm:^8.0.2":
+  version: 8.0.2
+  resolution: "@types/download@npm:8.0.2"
   dependencies:
     "@types/decompress": "*"
-    "@types/got": ^8
+    "@types/got": ^9
     "@types/node": "*"
-  checksum: eabd3d9666b24065fd113551f04387d7eda86d513de5cd3877481c30832ec4617c8fe47464b56b787c733b13320bf19b87aa8babac113ff949fa88958fab4c2e
+  checksum: 2f8817d976e7bd50ef1c7fb793d6c2ee8aee9b64cf083cd107905e5ba648cb5cf74cc9d9653264c5b2a522508a8698a73db6aca88103c7dc2047e30a66756e28
   languageName: node
   linkType: hard
 
@@ -2188,12 +2188,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/got@npm:^8":
-  version: 8.3.6
-  resolution: "@types/got@npm:8.3.6"
+"@types/got@npm:^9":
+  version: 9.6.12
+  resolution: "@types/got@npm:9.6.12"
   dependencies:
     "@types/node": "*"
-  checksum: dd2eaa7cbe3ec1ac9898981472e896fda774004e278b5f4c43b7cdfd8e91d06af2a3be18105494864223426754907c6eab80432c866bc0656b832c3898360e3e
+    "@types/tough-cookie": "*"
+    form-data: ^2.5.0
+  checksum: e6c17cf49107064bc0c4371efaef6855d4753b0e17b615da1a9ab7dcd10c6208c48620c7309e96861a4ea1a0d8b9e7cdda67316b4075d4ba2aff4d7400f92f53
   languageName: node
   linkType: hard
 
@@ -2328,6 +2330,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 9578470db0b527c26e246a1220ae9bffc6bf47f20f89c54aac467c083ab1f7e16c00d9a7b4bb6cb4e2dfae465027270827e5908a6236063f6214625e50585d78
+  languageName: node
+  linkType: hard
+
+"@types/tough-cookie@npm:*":
+  version: 4.0.2
+  resolution: "@types/tough-cookie@npm:4.0.2"
+  checksum: e055556ffdaa39ad85ede0af192c93f93f986f4bd9e9426efdc2948e3e2632db3a4a584d4937dbf6d7620527419bc99e6182d3daf2b08685e710f2eda5291905
   languageName: node
   linkType: hard
 
@@ -2583,6 +2592,13 @@ __metadata:
   dependencies:
     "@babel/runtime": ^7.11.2
   checksum: 4098f5987bd0acaf6d24f4970df033c83f596aa940d9bfe2d21df00c7c184acc43fbf0255865f19fcb111136e5dfdec3dd0df845507db7164b971a3c00e60baa
+  languageName: node
+  linkType: hard
+
+"asynckit@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "asynckit@npm:0.4.0"
+  checksum: 7b78c451df768adba04e2d02e63e2d0bf3b07adcd6e42b4cf665cb7ce899bedd344c69a1dcbce355b5f972d597b25aaa1c1742b52cffd9caccb22f348114f6be
   languageName: node
   linkType: hard
 
@@ -3099,6 +3115,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"combined-stream@npm:^1.0.6":
+  version: 1.0.8
+  resolution: "combined-stream@npm:1.0.8"
+  dependencies:
+    delayed-stream: ~1.0.0
+  checksum: 49fa4aeb4916567e33ea81d088f6584749fc90c7abec76fd516bf1c5aa5c79f3584b5ba3de6b86d26ddd64bae5329c4c7479343250cfe71c75bb366eae53bb7c
+  languageName: node
+  linkType: hard
+
 "command-line-args@npm:^5.1.1":
   version: 5.2.1
   resolution: "command-line-args@npm:5.2.1"
@@ -3392,6 +3417,13 @@ __metadata:
     has-property-descriptors: ^1.0.0
     object-keys: ^1.1.1
   checksum: ce0aef3f9eb193562b5cfb79b2d2c86b6a109dfc9fdcb5f45d680631a1a908c06824ddcdb72b7573b54e26ace07f0a23420aaba0d5c627b34d2c1de8ef527e2b
+  languageName: node
+  linkType: hard
+
+"delayed-stream@npm:~1.0.0":
+  version: 1.0.0
+  resolution: "delayed-stream@npm:1.0.0"
+  checksum: 46fe6e83e2cb1d85ba50bd52803c68be9bd953282fa7096f51fc29edd5d67ff84ff753c51966061e5ba7cb5e47ef6d36a91924eddb7f3f3483b1c560f77a0020
   languageName: node
   linkType: hard
 
@@ -3827,6 +3859,17 @@ __metadata:
     debug:
       optional: true
   checksum: faa66059b66358ba65c234c2f2a37fcec029dc22775f35d9ad6abac56003268baf41e55f9ee645957b32c7d9f62baf1f0b906e68267276f54ec4b4c597c2b190
+  languageName: node
+  linkType: hard
+
+"form-data@npm:^2.5.0":
+  version: 2.5.1
+  resolution: "form-data@npm:2.5.1"
+  dependencies:
+    asynckit: ^0.4.0
+    combined-stream: ^1.0.6
+    mime-types: ^2.1.12
+  checksum: 5134ada56cc246b293a1ac7678dba6830000603a3979cf83ff7b2f21f2e3725202237cfb89e32bcb38a1d35727efbd3c3a22e65b42321e8ade8eec01ce755d08
   languageName: node
   linkType: hard
 
@@ -4938,10 +4981,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mime-db@npm:^1.28.0":
+"mime-db@npm:1.52.0, mime-db@npm:^1.28.0":
   version: 1.52.0
   resolution: "mime-db@npm:1.52.0"
   checksum: 0d99a03585f8b39d68182803b12ac601d9c01abfa28ec56204fa330bc9f3d1c5e14beb049bafadb3dbdf646dfb94b87e24d4ec7b31b7279ef906a8ea9b6a513f
+  languageName: node
+  linkType: hard
+
+"mime-types@npm:^2.1.12":
+  version: 2.1.35
+  resolution: "mime-types@npm:2.1.35"
+  dependencies:
+    mime-db: 1.52.0
+  checksum: 89a5b7f1def9f3af5dad6496c5ed50191ae4331cc5389d7c521c8ad28d5fdad2d06fd81baf38fed813dc4e46bb55c8145bb0ff406330818c9cf712fb2e9b3836
   languageName: node
   linkType: hard
 
