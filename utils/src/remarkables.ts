@@ -91,7 +91,7 @@ function buildExecuteCommands(program: Command, desmosClient: DesmosClient, acco
         .requiredOption("--mint-fees <mint-fees>", "fees to mint the remarkables. ex: 1000stkae,1000udsm", parseCoinList)
         .action(async (options) => {
             const client = new RemarkablesClient(desmosClient, account.address, options.contract);
-            const response = await client.mint({ postId: options.postId.toString(), remarkablesUri: options.remarkablesUri, rarityLevel: options.rarityLevel });
+            const response = await client.mint({ postId: options.postId.toString(), remarkablesUri: options.remarkablesUri, rarityLevel: options.rarityLevel }, "auto", "", options.mintFees);
             console.log(response);
         });
     program
