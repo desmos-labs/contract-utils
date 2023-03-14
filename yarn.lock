@@ -1661,9 +1661,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cosmwasm/ts-codegen@npm:^0.24.0":
-  version: 0.24.0
-  resolution: "@cosmwasm/ts-codegen@npm:0.24.0"
+"@cosmwasm/ts-codegen@npm:^0.25.2":
+  version: 0.25.2
+  resolution: "@cosmwasm/ts-codegen@npm:0.25.2"
   dependencies:
     "@babel/core": 7.18.10
     "@babel/generator": 7.18.12
@@ -1691,10 +1691,10 @@ __metadata:
     parse-package-name: 1.0.0
     rimraf: 3.0.2
     shelljs: 0.8.5
-    wasm-ast-types: ^0.17.0
+    wasm-ast-types: ^0.18.2
   bin:
     cosmwasm-ts-codegen: main/ts-codegen.js
-  checksum: b56f8ee2a4319d588e8388f0a2c3dd3ced172536e7c1ab32aa389d58da9edd10905e96168733e1174d5c6efcb41e88c4657571db863170f0004ac853d01455a6
+  checksum: 6965f99379d2a47d107000e8b6e1f610924d7a065df7f4434f4f0c0b7d680947aab3bfa806c9c1780a939534fc34dae7d0a6a32b1a07badb36280e2b116120de
   languageName: node
   linkType: hard
 
@@ -1711,7 +1711,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@desmoslabs/contract-types@workspace:types"
   dependencies:
-    "@cosmwasm/ts-codegen": ^0.24.0
+    "@cosmwasm/ts-codegen": ^0.25.2
     "@tanstack/react-query": ^4.26.1
     "@types/adm-zip": ^0.5.0
     "@types/download": ^8.0.2
@@ -6710,9 +6710,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wasm-ast-types@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "wasm-ast-types@npm:0.17.0"
+"wasm-ast-types@npm:^0.18.2":
+  version: 0.18.2
+  resolution: "wasm-ast-types@npm:0.18.2"
   dependencies:
     "@babel/runtime": ^7.18.9
     "@babel/types": 7.18.10
@@ -6720,7 +6720,7 @@ __metadata:
     ast-stringify: 0.1.0
     case: 1.6.3
     deepmerge: 4.2.2
-  checksum: 16079505a72a601290a19e227d71d44addac607bca7d13deef3c0677ffe08852677fbda1419ae17158e798de2931e0ac4a330c90f2742e07a4307d1f179798a0
+  checksum: 6e9e31131371440375c27202ae121d5ec682acd5c88842f767d15d85746563ccf463b4c2b59bc7b8e1cfed5ae9f798d310191d6e148a9b146e40b2b2d1823782
   languageName: node
   linkType: hard
 
