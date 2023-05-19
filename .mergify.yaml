@@ -6,7 +6,7 @@ queue_rules:
 pull_request_rules:
   - name: automerge to main with label automerge and branch protection passing
     conditions:
-      - "#approved-reviews-by>1"
+      - "#approved-reviews-by>=1"
       - label=automerge
     actions:
       queue:
@@ -16,3 +16,4 @@ pull_request_rules:
           {{ title }} (#{{ number }})
           
           {{ body }}
+
