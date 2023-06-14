@@ -1712,7 +1712,7 @@ __metadata:
   resolution: "@desmoslabs/contract-types@workspace:types"
   dependencies:
     "@cosmwasm/ts-codegen": ^0.27.0
-    "@tanstack/react-query": ^4.29.7
+    "@tanstack/react-query": ^4.29.13
     "@types/adm-zip": ^0.5.0
     "@types/download": ^8.0.2
     "@types/node": ^18.16.3
@@ -2076,18 +2076,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:4.29.7":
-  version: 4.29.7
-  resolution: "@tanstack/query-core@npm:4.29.7"
-  checksum: f28441a1fc17881d770ebacbe3a2fcf58bd065ac0cf58f8dc544d367f00d7f65213e09a1a1280e021eef25a50b307cac6884173b5acf32570e755baf29b741aa
+"@tanstack/query-core@npm:4.29.11":
+  version: 4.29.11
+  resolution: "@tanstack/query-core@npm:4.29.11"
+  checksum: 2a17223f34e99e17d564a15206668eb79324da72e630a47cf41690f92fb091a8669bdc89e9ab1b0d8f0e3e8f579529cfb0aa6f10b4fc58ea81cc7e5caede9229
   languageName: node
   linkType: hard
 
-"@tanstack/react-query@npm:^4.29.7":
-  version: 4.29.7
-  resolution: "@tanstack/react-query@npm:4.29.7"
+"@tanstack/react-query@npm:^4.29.13":
+  version: 4.29.13
+  resolution: "@tanstack/react-query@npm:4.29.13"
   dependencies:
-    "@tanstack/query-core": 4.29.7
+    "@tanstack/query-core": 4.29.11
     use-sync-external-store: ^1.2.0
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -2098,7 +2098,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 9db2fb78e18f299c0e58f3c177261f6010fdea63a5f950e4c93a7cf7a46da019aa3171c77759fa7b327e35763e3379f0a885c71dafd9aa99bf2ddda9f264de90
+  checksum: 8cd4f945e59508dd5024390711e5ca374f4fb41f6c8ea06e8cda45a153274664ba2d0533df7101ee9014b1aafc46400811b671167ab9284f1f584e3a5d4f3645
   languageName: node
   linkType: hard
 
