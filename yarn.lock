@@ -1718,7 +1718,7 @@ __metadata:
     "@types/node": ^18.16.3
     adm-zip: ^0.5.10
     commander: ^10.0.1
-    dotenv: ^16.0.1
+    dotenv: ^16.3.0
     download: ^8.0.0
     json-schema-to-typescript: ^13.0.1
     ts-dedupe: ^0.3.1
@@ -3424,10 +3424,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.1":
-  version: 16.0.3
-  resolution: "dotenv@npm:16.0.3"
-  checksum: afcf03f373d7a6d62c7e9afea6328e62851d627a4e73f2e12d0a8deae1cd375892004f3021883f8aec85932cd2834b091f568ced92b4774625b321db83b827f8
+"dotenv@npm:^16.3.0":
+  version: 16.3.0
+  resolution: "dotenv@npm:16.3.0"
+  checksum: 43a90ec87868c8b962a028b69cbe86e71621c76837249a9d65fb131b03ee69817b019d34a5456174cb04095052a496b4e1b5da72e4af2393df6083513ab62d4b
   languageName: node
   linkType: hard
 
