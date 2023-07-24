@@ -1715,7 +1715,7 @@ __metadata:
     "@tanstack/react-query": ^4.29.7
     "@types/adm-zip": ^0.5.0
     "@types/download": ^8.0.2
-    "@types/node": ^18.16.3
+    "@types/node": ^20.4.4
     adm-zip: ^0.5.10
     commander: ^10.0.1
     dotenv: ^16.0.1
@@ -2301,10 +2301,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.16.3":
-  version: 18.16.3
-  resolution: "@types/node@npm:18.16.3"
-  checksum: 816b39d45b05ebdc6f362b630970df3f6d82f71d418a2555353522f4eeeb078fa201de5299f02c09a09faa975e43b2745fe19c263d44069f87ddf37d6c37b717
+"@types/node@npm:^20.4.4":
+  version: 20.4.4
+  resolution: "@types/node@npm:20.4.4"
+  checksum: 43f3c4a8acc38ae753e15a0e79bae0447d255b3742fa87f8e065d7b9d20ecb0e03d6c5b46c00d5d26f4552160381a00255f49205595a8ee48c2423e00263c930
   languageName: node
   linkType: hard
 
@@ -3170,7 +3170,7 @@ __metadata:
     "@desmoslabs/contract-types": ^1.0.0
     "@desmoslabs/desmjs": ^4.6.3
     "@types/inquirer": ^9.0.3
-    "@types/node": ^18.16.3
+    "@types/node": ^20.4.4
     commander: ^10.0.1
     inquirer: ^9.2.4
     ts-node: ^10.9.1
