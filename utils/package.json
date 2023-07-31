@@ -24,7 +24,7 @@
     "@desmoslabs/contract-types": "^1.0.0",
     "@desmoslabs/desmjs": "^4.6.3",
     "commander": "^10.0.1",
-    "inquirer": "^9.2.4"
+    "inquirer": "^9.2.9"
   },
   "devDependencies": {
     "@types/inquirer": "^9.0.3",
