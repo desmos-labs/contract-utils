@@ -13,7 +13,7 @@
     "codegen": "ts-node src/codegen.ts"
   },
   "dependencies": {
-    "@cosmwasm/ts-codegen": "^0.27.0",
+    "@cosmwasm/ts-codegen": "^0.35.2",
     "@tanstack/react-query": "^4.29.7",
     "adm-zip": "^0.5.10",
     "commander": "^10.0.1",
