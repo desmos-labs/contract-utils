@@ -25,7 +25,7 @@
   "devDependencies": {
     "@types/adm-zip": "^0.5.0",
     "@types/download": "^8.0.2",
-    "@types/node": "^18.16.3",
+    "@types/node": "^20.5.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   }
