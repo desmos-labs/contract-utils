@@ -19,7 +19,7 @@
     "commander": "^10.0.1",
     "dotenv": "^16.0.1",
     "download": "^8.0.0",
-    "json-schema-to-typescript": "^13.0.1",
+    "json-schema-to-typescript": "^13.1.0",
     "ts-dedupe": "^0.3.1"
   },
   "devDependencies": {
