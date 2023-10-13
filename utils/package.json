@@ -23,7 +23,7 @@
     "@cosmjs/crypto": "^0.29.4",
     "@desmoslabs/contract-types": "^1.0.0",
     "@desmoslabs/desmjs": "^4.6.3",
-    "commander": "^10.0.1",
+    "commander": "^11.1.0",
     "inquirer": "^9.2.4"
   },
   "devDependencies": {
